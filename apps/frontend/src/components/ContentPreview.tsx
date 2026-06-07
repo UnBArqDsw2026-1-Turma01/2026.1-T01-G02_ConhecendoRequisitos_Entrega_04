@@ -2,24 +2,21 @@ export function ContentPreview() {
   return (
     <figure
       className="video-card"
-      aria-label="Prévia do vídeo sobre brainstorming"
+      aria-label="Vídeo embutido sobre brainstorming"
     >
-      <div className="video-card__image">
-        <div className="video-card__overlay" />
-        <div className="video-card__title">Como fazer um</div>
-        <div className="video-card__subtitle">BRAINSTORMING</div>
-        <div className="video-card__caption">do jeito certo</div>
-
-        <button
-          type="button"
-          className="video-card__play"
-          aria-label="Assistir ao vídeo"
-        >
-          <span aria-hidden="true" />
-        </button>
+      <div className="video-card__frame">
+        <iframe
+          title="Técnicas de brainstorming para projetos individuais e em equipe"
+          src="https://www.youtube-nocookie.com/embed/kKAZGA1v3cw"
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
       </div>
+
       <figcaption className="video-card__footer">
-        Material de apoio para aprofundar a técnica de brainstorming.
+        Vídeo de apoio sobre técnicas de brainstorming para equipes e projetos.
       </figcaption>
     </figure>
   );

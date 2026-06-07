@@ -1,76 +1,151 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { ContentPreview } from "./components/ContentPreview";
+import { LessonSection } from "./components/LessonSection";
 import { ReadingSidebar } from "./components/ReadingSidebar";
 import "./App.css";
 
+const lessonSections = [
+  {
+    id: "conceito",
+    title: "O que é brainstorming?",
+    paragraphs: [
+      "Brainstorming é uma técnica de elicitação de requisitos usada para gerar ideias em grupo, sem críticas prematuras. O objetivo é ampliar a visão sobre o problema, levantar necessidades e transformar hipóteses em insumos concretos para o sistema.",
+      "Na prática, a técnica funciona melhor quando existe um facilitador, um tema bem definido e um tempo curto de rodada para evitar que a discussão se perca. O foco inicial é quantidade de ideias, não qualidade imediata.",
+    ],
+    bullets: [
+      "Estimula participação de perfis diferentes.",
+      "Ajuda a descobrir requisitos implícitos.",
+      "Reduz o risco de prender a equipe em uma única solução cedo demais.",
+    ],
+  },
+  {
+    id: "preparo",
+    title: "Como conduzir uma sessão eficiente",
+    paragraphs: [
+      "Antes de começar, o facilitador precisa definir o problema, selecionar os participantes certos e deixar claro o objetivo da sessão. Um tema vago normalmente gera ideias dispersas e pouco úteis.",
+      "Também vale combinar regras simples: sem interrupções, sem julgamento, uma ideia por vez e tempo limitado para cada rodada. Isso deixa o ambiente seguro e aumenta a produtividade.",
+    ],
+    bullets: [
+      "Definir o problema com clareza.",
+      "Convidar pessoas com visões complementares.",
+      "Registrar tudo em quadro, post-its ou ferramenta digital.",
+    ],
+  },
+  {
+    id: "tecnicas",
+    title: "Variações que ajudam a gerar mais ideias",
+    paragraphs: [
+      "Além do brainstorming livre, existem variações que deixam a dinâmica mais forte. O brainwriting, por exemplo, pede que cada participante escreva suas ideias antes da discussão, o que ajuda quem pensa com mais calma.",
+      "Outra alternativa é o brainstorming reverso: em vez de perguntar como resolver o problema, pergunta-se como piorá-lo. Depois, o grupo transforma as respostas negativas em oportunidades de solução.",
+    ],
+    bullets: [
+      "Brainwriting para reduzir o efeito de pessoas dominantes.",
+      "Brainstorming reverso para enxergar riscos e falhas.",
+      "Agrupamento posterior das ideias por similaridade.",
+    ],
+  },
+  {
+    id: "fechamento",
+    title: "Boas práticas e erros comuns",
+    paragraphs: [
+      "Depois da geração de ideias, o grupo precisa organizar e priorizar o que apareceu. Ideias repetidas podem ser agrupadas, requisitos ambíguos devem ser esclarecidos e o resultado precisa virar ação concreta.",
+      "Os erros mais comuns são: deixar o encontro longo demais, não registrar as ideias, misturar julgamento com geração e chamar apenas pessoas com o mesmo ponto de vista. Isso enfraquece a diversidade e o valor final do exercício.",
+    ],
+    bullets: [
+      "Manter a sessão curta e objetiva.",
+      "Validar as ideias logo depois da coleta.",
+      "Transformar os achados em requisitos rastreáveis.",
+    ],
+  },
+] as const;
+
+type LessonSectionId = (typeof lessonSections)[number]["id"];
+
+const createInitialReadState = () =>
+  lessonSections.reduce(
+    (accumulator, section) => {
+      accumulator[section.id] = false;
+      return accumulator;
+    },
+    {} as Record<LessonSectionId, boolean>,
+  );
+
 function App() {
-  const [completed, setCompleted] = useState(false);
-  const endMarkerRef = useRef<HTMLDivElement | null>(null);
+  const [readSections, setReadSections] = useState<
+    Record<LessonSectionId, boolean>
+  >(createInitialReadState);
 
-  useEffect(() => {
-    const endMarker = endMarkerRef.current;
-
-    if (!endMarker || completed) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setCompleted(true);
-          observer.disconnect();
-        }
-      },
-      {
-        threshold: 0.9,
-      },
+  const markSectionAsRead = (sectionId: LessonSectionId) => {
+    setReadSections((current) =>
+      current[sectionId] ? current : { ...current, [sectionId]: true },
     );
+  };
 
-    observer.observe(endMarker);
-
-    return () => observer.disconnect();
-  }, [completed]);
+  const readCount = lessonSections.reduce(
+    (count, section) => count + (readSections[section.id] ? 1 : 0),
+    0,
+  );
+  const progress = Math.round((readCount / lessonSections.length) * 100);
 
   return (
     <main className="lesson-shell">
       <Breadcrumbs />
 
       <section className="lesson-layout" aria-label="Conteúdo da trilha">
-        <ReadingSidebar completed={completed} />
+        <ReadingSidebar
+          progress={progress}
+          items={lessonSections.map((section) => ({
+            label: section.title,
+            read: readSections[section.id],
+          }))}
+        />
 
         <article className="lesson-content">
           <h1>1. Técnicas de elicitação de requisitos</h1>
 
-          <p className="lesson-text">
-            O brainstorming é uma técnica de elicitação de requisitos que busca
-            desenvolver ideias e identificar necessidades de forma colaborativa.
-            Participantes contribuem livremente, sem julgamentos, permitindo
-            descobrir requisitos explícitos e implícitos, além de estimular
-            soluções criativas e inovadoras para o sistema a ser desenvolvido.
+          <p className="lesson-text lesson-intro">
+            Leia cada bloco abaixo e use o botão no fim de cada tópico para
+            marcá-lo como lido. Quando você confirmar a leitura, a bolinha
+            correspondente na lateral fica verde e a barra de progresso avança.
           </p>
 
-          <p className="lesson-text lesson-text--spaced">
-            Veja o vídeo para mais detalhes:
-          </p>
+          <LessonSection
+            id="conceito"
+            title="O que é brainstorming?"
+            paragraphs={lessonSections[0].paragraphs}
+            bullets={lessonSections[0].bullets}
+            read={readSections.conceito}
+            onMarkRead={() => markSectionAsRead("conceito")}
+          >
+            <ContentPreview />
+          </LessonSection>
 
-          <ContentPreview />
+          <LessonSection
+            id="preparo"
+            title="Como conduzir uma sessão eficiente"
+            paragraphs={lessonSections[1].paragraphs}
+            bullets={lessonSections[1].bullets}
+            read={readSections.preparo}
+            onMarkRead={() => markSectionAsRead("preparo")}
+          />
 
-          <div className="lesson-actions">
-            <button
-              type="button"
-              className={`finish-button${completed ? " finish-button--done" : ""}`}
-              onClick={() => setCompleted(true)}
-              disabled={completed}
-            >
-              {completed ? "Leitura concluída" : "Marcar leitura concluída"}
-            </button>
-          </div>
+          <LessonSection
+            id="tecnicas"
+            title="Variações que ajudam a gerar mais ideias"
+            paragraphs={lessonSections[2].paragraphs}
+            bullets={lessonSections[2].bullets}
+            read={readSections.tecnicas}
+            onMarkRead={() => markSectionAsRead("tecnicas")}
+          />
 
-          <div
-            ref={endMarkerRef}
-            className="lesson-end-marker"
-            aria-hidden="true"
+          <LessonSection
+            id="fechamento"
+            title="Boas práticas e erros comuns"
+            paragraphs={lessonSections[3].paragraphs}
+            bullets={lessonSections[3].bullets}
+            read={readSections.fechamento}
+            onMarkRead={() => markSectionAsRead("fechamento")}
           />
         </article>
       </section>

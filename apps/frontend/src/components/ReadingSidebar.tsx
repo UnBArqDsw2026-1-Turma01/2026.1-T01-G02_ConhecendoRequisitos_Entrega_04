@@ -1,27 +1,22 @@
 type ReadingSidebarProps = {
-  completed: boolean;
+  progress: number;
+  items: Array<{
+    label: string;
+    read: boolean;
+  }>;
 };
 
-const steps = [
-  { label: "Brainstorming", status: "current" as const },
-  { label: "Análise de documentação", status: "pending" as const },
-  { label: "Quiz", status: "future" as const },
-];
-
-export function ReadingSidebar({ completed }: ReadingSidebarProps) {
-  const progress = completed ? 100 : 33;
-
+export function ReadingSidebar({ progress, items }: ReadingSidebarProps) {
   return (
     <aside className="lesson-sidebar" aria-label="Progresso do módulo">
       <div className="lesson-sidebar__steps">
-        {steps.map((step) => (
+        {items.map((item) => (
           <div
-            key={step.label}
-            className={`lesson-step lesson-step--${step.status}`}
-            aria-current={step.status === "current" ? "step" : undefined}
+            key={item.label}
+            className={`lesson-step${item.read ? " lesson-step--read" : ""}`}
           >
             <span className="lesson-step__dot" aria-hidden="true" />
-            <span className="lesson-step__label">{step.label}</span>
+            <span className="lesson-step__label">{item.label}</span>
           </div>
         ))}
       </div>
