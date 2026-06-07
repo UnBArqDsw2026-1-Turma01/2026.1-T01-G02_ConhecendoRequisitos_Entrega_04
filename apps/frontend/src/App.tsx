@@ -76,10 +76,11 @@ function App() {
     Record<LessonSectionId, boolean>
   >(createInitialReadState);
 
-  const markSectionAsRead = (sectionId: LessonSectionId) => {
-    setReadSections((current) =>
-      current[sectionId] ? current : { ...current, [sectionId]: true },
-    );
+  const toggleSectionRead = (sectionId: LessonSectionId) => {
+    setReadSections((current) => ({
+      ...current,
+      [sectionId]: !current[sectionId],
+    }));
   };
 
   const readCount = lessonSections.reduce(
@@ -104,19 +105,13 @@ function App() {
         <article className="lesson-content">
           <h1>1. Técnicas de elicitação de requisitos</h1>
 
-          <p className="lesson-text lesson-intro">
-            Leia cada bloco abaixo e use o botão no fim de cada tópico para
-            marcá-lo como lido. Quando você confirmar a leitura, a bolinha
-            correspondente na lateral fica verde e a barra de progresso avança.
-          </p>
-
           <LessonSection
             id="conceito"
             title="O que é brainstorming?"
             paragraphs={lessonSections[0].paragraphs}
             bullets={lessonSections[0].bullets}
             read={readSections.conceito}
-            onMarkRead={() => markSectionAsRead("conceito")}
+            onMarkRead={() => toggleSectionRead("conceito")}
           >
             <ContentPreview />
           </LessonSection>
@@ -127,7 +122,7 @@ function App() {
             paragraphs={lessonSections[1].paragraphs}
             bullets={lessonSections[1].bullets}
             read={readSections.preparo}
-            onMarkRead={() => markSectionAsRead("preparo")}
+            onMarkRead={() => toggleSectionRead("preparo")}
           />
 
           <LessonSection
@@ -136,7 +131,7 @@ function App() {
             paragraphs={lessonSections[2].paragraphs}
             bullets={lessonSections[2].bullets}
             read={readSections.tecnicas}
-            onMarkRead={() => markSectionAsRead("tecnicas")}
+            onMarkRead={() => toggleSectionRead("tecnicas")}
           />
 
           <LessonSection
@@ -145,7 +140,7 @@ function App() {
             paragraphs={lessonSections[3].paragraphs}
             bullets={lessonSections[3].bullets}
             read={readSections.fechamento}
-            onMarkRead={() => markSectionAsRead("fechamento")}
+            onMarkRead={() => toggleSectionRead("fechamento")}
           />
         </article>
       </section>

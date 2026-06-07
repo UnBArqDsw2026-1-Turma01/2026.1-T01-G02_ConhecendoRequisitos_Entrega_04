@@ -30,7 +30,7 @@ export const LessonSection = forwardRef<HTMLDivElement, LessonSectionProps>(
             className={`lesson-section__action${read ? " lesson-section__action--done" : ""}`}
             onClick={onMarkRead}
           >
-            {read ? "Marcado como lido" : "Marcar como lido"}
+            {read ? "Lido" : "Marcar como lido"}
           </button>
         </div>
 
