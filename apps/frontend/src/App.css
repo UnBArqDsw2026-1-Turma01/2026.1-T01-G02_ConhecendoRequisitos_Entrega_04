@@ -82,13 +82,19 @@
 }
 
 .lesson-step--current .lesson-step__dot {
+  background: #f1da69;
+  box-shadow: 0 0 0 6px rgba(241, 218, 105, 0.16);
+}
+
+.lesson-step--done .lesson-step__dot,
+.lesson-step--read .lesson-step__dot {
   background: #35b53d;
   box-shadow: 0 0 0 6px rgba(53, 181, 61, 0.12);
 }
 
-.lesson-step--read .lesson-step__dot {
-  background: #35b53d;
-  box-shadow: 0 0 0 6px rgba(53, 181, 61, 0.12);
+.lesson-step--wrong .lesson-step__dot {
+  background: #ff4c4c;
+  box-shadow: 0 0 0 6px rgba(255, 76, 76, 0.12);
 }
 
 .lesson-step {
@@ -345,6 +351,19 @@
   height: 180px;
 }
 
+.quiz-layout {
+  display: block;
+  padding: 0 0 30px;
+}
+
+.quiz-content {
+  margin-left: 308px;
+  padding: 44px 46px 48px 24px;
+  max-width: calc(100% - 308px);
+  color: #25243f;
+  min-height: calc(100svh - 56px);
+}
+
 @media (max-width: 1024px) {
   .breadcrumbs {
     padding-inline: 18px;
@@ -353,6 +372,10 @@
   }
 
   .lesson-layout {
+    padding: 0;
+  }
+
+  .quiz-layout {
     padding: 0;
   }
 
@@ -377,6 +400,13 @@
   }
 
   .lesson-content {
+    margin-left: 0;
+    max-width: 100%;
+    min-height: auto;
+    padding: 28px 18px 38px;
+  }
+
+  .quiz-content {
     margin-left: 0;
     max-width: 100%;
     min-height: auto;
