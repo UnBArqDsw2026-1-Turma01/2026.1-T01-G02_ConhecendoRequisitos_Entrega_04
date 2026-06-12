@@ -64,6 +64,11 @@ select {
 }
 
 #root {
+  min-height: 100vh;
+}
+
+/* Container centralizado — usado pelas páginas, não pelo Header */
+.page-content {
   width: min(1126px, 100%);
   min-height: 100vh;
   margin: 0 auto;
@@ -74,7 +79,7 @@ select {
 }
 
 @media (max-width: 1024px) {
-  #root {
+  .page-content {
     width: 100%;
     border-inline: none;
     box-shadow: none;

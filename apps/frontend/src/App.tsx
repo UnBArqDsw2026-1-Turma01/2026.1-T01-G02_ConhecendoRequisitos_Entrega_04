@@ -9,8 +9,8 @@
  */
 
 import { useState } from "react";
-import { TrailPage } from "./pages/TrailPage";
 import { Header } from "./components/Header";
+import { TrailPage } from "./pages/TrailPage";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { ContentPreview } from "./components/ContentPreview";
 import { LessonSection } from "./components/LessonSection";
@@ -104,82 +104,86 @@ function App() {
   );
   const progress = Math.round((readCount / lessonSections.length) * 100);
 
-  /* ── TrailPage ── */
-  if (page === "trail") {
-    return (
-      <TrailPage
-        onStartModule={() => setPage("lesson")}
-        onNavigateToTrails={() => {/* futuro: voltar para listagem de trilhas */ }}
-      />
-    );
-  }
-
-  /* ── LessonPage ── */
   return (
     <>
+      {/* Header full-width, fora do container centralizado */}
       <Header isLoggedIn={true} />
 
-      <main className="lesson-shell">
-        <Breadcrumbs
-          items={[
-            { label: "Trilhas", onClick: () => setPage("trail") },
-            { label: "Módulos", onClick: () => setPage("trail") },
-            { label: "Introdução e elicitação" },
-          ]}
-        />
-
-        <section className="lesson-layout" aria-label="Conteúdo da trilha">
-          <ReadingSidebar
-            progress={progress}
-            items={lessonSections.map((s) => ({
-              label: s.title,
-              read: readSections[s.id],
-            }))}
+      {/* Conteúdo centralizado */}
+      <div className="page-content">
+        {/* ── TrailPage ── */}
+        {page === "trail" && (
+          <TrailPage
+            onStartModule={() => setPage("lesson")}
+            onNavigateToTrails={() => { /* futuro: voltar para listagem de trilhas */ }}
           />
+        )}
 
-          <article className="lesson-content">
-            <h1>1. Técnicas de elicitação de requisitos</h1>
-
-            <LessonSection
-              id="conceito"
-              title="O que é brainstorming?"
-              paragraphs={lessonSections[0].paragraphs}
-              bullets={lessonSections[0].bullets}
-              read={readSections.conceito}
-              onMarkRead={() => toggleSectionRead("conceito")}
-            >
-              <ContentPreview />
-            </LessonSection>
-
-            <LessonSection
-              id="preparo"
-              title="Como conduzir uma sessão eficiente"
-              paragraphs={lessonSections[1].paragraphs}
-              bullets={lessonSections[1].bullets}
-              read={readSections.preparo}
-              onMarkRead={() => toggleSectionRead("preparo")}
+        {/* ── LessonPage ── */}
+        {page === "lesson" && (
+          <main className="lesson-shell">
+            <Breadcrumbs
+              items={[
+                { label: "Trilhas",  onClick: () => setPage("trail") },
+                { label: "Módulos",  onClick: () => setPage("trail") },
+                { label: "Introdução e elicitação" },
+              ]}
             />
 
-            <LessonSection
-              id="tecnicas"
-              title="Variações que ajudam a gerar mais ideias"
-              paragraphs={lessonSections[2].paragraphs}
-              bullets={lessonSections[2].bullets}
-              read={readSections.tecnicas}
-              onMarkRead={() => toggleSectionRead("tecnicas")}
-            />
+            <section className="lesson-layout" aria-label="Conteúdo da trilha">
+              <ReadingSidebar
+                progress={progress}
+                items={lessonSections.map((s) => ({
+                  label: s.title,
+                  read: readSections[s.id],
+                }))}
+              />
 
-            <LessonSection
-              id="fechamento"
-              title="Boas práticas e erros comuns"
-              paragraphs={lessonSections[3].paragraphs}
-              bullets={lessonSections[3].bullets}
-              read={readSections.fechamento}
-              onMarkRead={() => toggleSectionRead("fechamento")}
-            />
-          </article>
-        </section>
-      </main>
+              <article className="lesson-content">
+                <h1>1. Técnicas de elicitação de requisitos</h1>
+
+                <LessonSection
+                  id="conceito"
+                  title="O que é brainstorming?"
+                  paragraphs={lessonSections[0].paragraphs}
+                  bullets={lessonSections[0].bullets}
+                  read={readSections.conceito}
+                  onMarkRead={() => toggleSectionRead("conceito")}
+                >
+                  <ContentPreview />
+                </LessonSection>
+
+                <LessonSection
+                  id="preparo"
+                  title="Como conduzir uma sessão eficiente"
+                  paragraphs={lessonSections[1].paragraphs}
+                  bullets={lessonSections[1].bullets}
+                  read={readSections.preparo}
+                  onMarkRead={() => toggleSectionRead("preparo")}
+                />
+
+                <LessonSection
+                  id="tecnicas"
+                  title="Variações que ajudam a gerar mais ideias"
+                  paragraphs={lessonSections[2].paragraphs}
+                  bullets={lessonSections[2].bullets}
+                  read={readSections.tecnicas}
+                  onMarkRead={() => toggleSectionRead("tecnicas")}
+                />
+
+                <LessonSection
+                  id="fechamento"
+                  title="Boas práticas e erros comuns"
+                  paragraphs={lessonSections[3].paragraphs}
+                  bullets={lessonSections[3].bullets}
+                  read={readSections.fechamento}
+                  onMarkRead={() => toggleSectionRead("fechamento")}
+                />
+              </article>
+            </section>
+          </main>
+        )}
+      </div>
     </>
   );
 }
