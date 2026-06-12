@@ -1,9 +1,22 @@
+/**
+ * App — roteamento simples baseado em estado.
+ *
+ * Páginas:
+ *   "trail"  → TrailPage  (listagem de módulos)
+ *   "lesson" → página de lição existente
+ *
+ * Quando o React Router for adicionado, substituir o estado por <Routes>.
+ */
+
 import { useState } from "react";
+import { TrailPage } from "./pages/TrailPage";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { ContentPreview } from "./components/ContentPreview";
 import { LessonSection } from "./components/LessonSection";
 import { ReadingSidebar } from "./components/ReadingSidebar";
 import "./App.css";
+
+/* ── Dados da lição (mock) ─────────────────────────────────── */
 
 const lessonSections = [
   {
@@ -61,44 +74,62 @@ const lessonSections = [
 ] as const;
 
 type LessonSectionId = (typeof lessonSections)[number]["id"];
+type Page = "trail" | "lesson";
 
 const createInitialReadState = () =>
   lessonSections.reduce(
-    (accumulator, section) => {
-      accumulator[section.id] = false;
-      return accumulator;
+    (acc, section) => {
+      acc[section.id] = false;
+      return acc;
     },
     {} as Record<LessonSectionId, boolean>,
   );
 
-function App() {
-  const [readSections, setReadSections] = useState<
-    Record<LessonSectionId, boolean>
-  >(createInitialReadState);
+/* ── App ────────────────────────────────────────────────────── */
 
-  const toggleSectionRead = (sectionId: LessonSectionId) => {
-    setReadSections((current) => ({
-      ...current,
-      [sectionId]: !current[sectionId],
-    }));
+function App() {
+  const [page, setPage] = useState<Page>("trail");
+  const [readSections, setReadSections] = useState<Record<LessonSectionId, boolean>>(
+    createInitialReadState,
+  );
+
+  const toggleSectionRead = (id: LessonSectionId) => {
+    setReadSections((curr) => ({ ...curr, [id]: !curr[id] }));
   };
 
   const readCount = lessonSections.reduce(
-    (count, section) => count + (readSections[section.id] ? 1 : 0),
+    (n, s) => n + (readSections[s.id] ? 1 : 0),
     0,
   );
   const progress = Math.round((readCount / lessonSections.length) * 100);
 
+  /* ── TrailPage ── */
+  if (page === "trail") {
+    return (
+      <TrailPage
+        onStartModule={() => setPage("lesson")}
+        onNavigateToTrails={() => {/* futuro: voltar para listagem de trilhas */}}
+      />
+    );
+  }
+
+  /* ── LessonPage ── */
   return (
     <main className="lesson-shell">
-      <Breadcrumbs />
+      <Breadcrumbs
+        items={[
+          { label: "Trilhas",  onClick: () => setPage("trail") },
+          { label: "Módulos",  onClick: () => setPage("trail") },
+          { label: "Introdução e elicitação" },
+        ]}
+      />
 
       <section className="lesson-layout" aria-label="Conteúdo da trilha">
         <ReadingSidebar
           progress={progress}
-          items={lessonSections.map((section) => ({
-            label: section.title,
-            read: readSections[section.id],
+          items={lessonSections.map((s) => ({
+            label: s.title,
+            read: readSections[s.id],
           }))}
         />
 

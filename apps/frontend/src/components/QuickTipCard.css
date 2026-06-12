@@ -1,0 +1,35 @@
+.quick-tip-card {
+  background: linear-gradient(
+    135deg,
+    var(--cr-purple-700) 0%,
+    var(--cr-purple-600) 100%
+  );
+  border-radius: var(--cr-radius-lg);
+  padding: 18px 20px;
+  color: #fff;
+  box-shadow: var(--cr-shadow-md);
+}
+
+.quick-tip-card__label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.70);
+  margin-bottom: 10px;
+}
+
+.quick-tip-card__text {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.quick-tip-card__text p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.6;
+}
