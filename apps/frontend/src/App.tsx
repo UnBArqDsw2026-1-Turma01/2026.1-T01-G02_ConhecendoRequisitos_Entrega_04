@@ -2,7 +2,7 @@
  * App — roteamento simples baseado em estado.
  *
  * Páginas:
- *   "trail"  → TrailPage  (listagem de módulos)
+ *   "modules" → TrailPage  (listagem de módulos)
  *   "lesson" → página de lição existente
  *
  * Quando o React Router for adicionado, substituir o estado por <Routes>.
@@ -75,7 +75,7 @@ const lessonSections = [
 ] as const;
 
 type LessonSectionId = (typeof lessonSections)[number]["id"];
-type Page = "trail" | "lesson";
+type Page = "modules" | "lesson";
 
 const createInitialReadState = () =>
   lessonSections.reduce(
@@ -89,10 +89,10 @@ const createInitialReadState = () =>
 /* ── App ────────────────────────────────────────────────────── */
 
 function App() {
-  const [page, setPage] = useState<Page>("trail");
-  const [readSections, setReadSections] = useState<Record<LessonSectionId, boolean>>(
-    createInitialReadState,
-  );
+  const [page, setPage] = useState<Page>("modules");
+  const [readSections, setReadSections] = useState<
+    Record<LessonSectionId, boolean>
+  >(createInitialReadState);
 
   const toggleSectionRead = (id: LessonSectionId) => {
     setReadSections((curr) => ({ ...curr, [id]: !curr[id] }));
@@ -107,15 +107,17 @@ function App() {
   return (
     <>
       {/* Header full-width, fora do container centralizado */}
-      <Header isLoggedIn={true} />
+      <Header isLoggedIn={true} onModulesClick={() => setPage("modules")} />
 
       {/* Conteúdo centralizado */}
       <div className="page-content">
-        {/* ── TrailPage ── */}
-        {page === "trail" && (
+        {/* ── ModulesPage ── */}
+        {page === "modules" && (
           <TrailPage
             onStartModule={() => setPage("lesson")}
-            onNavigateToTrails={() => { /* futuro: voltar para listagem de trilhas */ }}
+            onNavigateToModules={() => {
+              /* futuro: voltar para listagem de módulos */
+            }}
           />
         )}
 
@@ -124,8 +126,8 @@ function App() {
           <main className="lesson-shell">
             <Breadcrumbs
               items={[
-                { label: "Trilhas",  onClick: () => setPage("trail") },
-                { label: "Módulos",  onClick: () => setPage("trail") },
+                { label: "Trilhas", onClick: () => setPage("modules") },
+                { label: "Módulos", onClick: () => setPage("modules") },
                 { label: "Introdução e elicitação" },
               ]}
             />

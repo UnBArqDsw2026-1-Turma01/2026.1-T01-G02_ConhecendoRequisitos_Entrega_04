@@ -1,5 +1,5 @@
 /**
- * TrailStatusCard — painel lateral com status de todas as trilhas.
+ * TrailStatusCard — painel lateral com status dos módulos.
  *
  * Recebe uma lista de itens, cada um com nome e progresso (0–100).
  * Reutiliza o componente ProgressBar internamente.
@@ -21,7 +21,7 @@ export interface TrailStatusCardProps {
 }
 
 export function TrailStatusCard({
-  title = "Status das Trilhas",
+  title = "Status dos Módulos",
   items,
 }: TrailStatusCardProps) {
   return (

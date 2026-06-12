@@ -1,5 +1,5 @@
 /**
- * TrailPage — página de listagem de módulos de uma trilha.
+ * TrailPage — página de listagem de módulos.
  *
  * Layout de duas colunas:
  *   Esquerda: TrailHero + lista de ModuleCards
@@ -11,7 +11,10 @@
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import { ModuleCard, type ModuleStatus } from "../components/ModuleCard";
 import { TrailHero } from "../components/TrailHero";
-import { TrailStatusCard, type TrailStatusItem } from "../components/TrailStatusCard";
+import {
+  TrailStatusCard,
+  type TrailStatusItem,
+} from "../components/TrailStatusCard";
 import { QuickTipCard } from "../components/QuickTipCard";
 import "./TrailPage.css";
 
@@ -59,10 +62,10 @@ const MODULES: Module[] = [
 ];
 
 const TRAIL_STATUSES: TrailStatusItem[] = [
-  { id: "elicitacao",  name: "Fundamentos de Elicitação",    progress: 80 },
-  { id: "priorizacao", name: "Fundamentos de Priorização",   progress: 80 },
-  { id: "modelagem",   name: "Fundamentos de Modelagem",     progress: 80 },
-  { id: "agil",        name: "Fundamentos de Modelagem Ágil",progress: 80 },
+  { id: "elicitacao", name: "Fundamentos de Elicitação", progress: 80 },
+  { id: "priorizacao", name: "Fundamentos de Priorização", progress: 80 },
+  { id: "modelagem", name: "Fundamentos de Modelagem", progress: 80 },
+  { id: "agil", name: "Fundamentos de Modelagem Ágil", progress: 80 },
 ];
 
 const QUICK_TIP =
@@ -72,22 +75,28 @@ const QUICK_TIP =
 
 interface TrailPageProps {
   onStartModule?: (moduleId: string) => void;
-  onNavigateToTrails?: () => void;
+  onNavigateToModules?: () => void;
 }
 
-export function TrailPage({ onStartModule, onNavigateToTrails }: TrailPageProps) {
+export function TrailPage({
+  onStartModule,
+  onNavigateToModules,
+}: TrailPageProps) {
   return (
     <main className="trail-page-shell">
       <Breadcrumbs
         items={[
-          { label: "Trilhas", onClick: onNavigateToTrails },
+          { label: "Trilhas", onClick: onNavigateToModules },
           { label: "Módulos" },
         ]}
       />
 
       <div className="trail-page">
         {/* ── Coluna principal ── */}
-        <section className="trail-page__main" aria-label="Trilha de aprendizado">
+        <section
+          className="trail-page__main"
+          aria-label="Módulos de aprendizado"
+        >
           <TrailHero
             title={TRAIL.title}
             description={TRAIL.description}
@@ -95,7 +104,7 @@ export function TrailPage({ onStartModule, onNavigateToTrails }: TrailPageProps)
           />
 
           <div className="trail-page__modules">
-            <h2 className="trail-page__modules-title">Conteúdos da trilha</h2>
+            <h2 className="trail-page__modules-title">Conteúdos dos módulos</h2>
 
             <ul className="trail-page__module-list" role="list">
               {MODULES.map((mod) => (
@@ -118,7 +127,10 @@ export function TrailPage({ onStartModule, onNavigateToTrails }: TrailPageProps)
         </section>
 
         {/* ── Barra lateral ── */}
-        <aside className="trail-page__sidebar" aria-label="Informações da trilha">
+        <aside
+          className="trail-page__sidebar"
+          aria-label="Informações dos módulos"
+        >
           <TrailStatusCard items={TRAIL_STATUSES} />
           <QuickTipCard text={QUICK_TIP} />
         </aside>
