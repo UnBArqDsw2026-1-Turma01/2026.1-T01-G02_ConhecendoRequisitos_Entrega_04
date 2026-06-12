@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Header} from "./components/Header";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { ContentPreview } from "./components/ContentPreview";
 import { LessonSection } from "./components/LessonSection";
@@ -8,7 +9,7 @@ import "./App.css";
 const lessonSections = [
   {
     id: "conceito",
-    title: "O que é brainstorming?",
+    title: "O que é brainstorming?", 
     paragraphs: [
       "Brainstorming é uma técnica de elicitação de requisitos usada para gerar ideias em grupo, sem críticas prematuras. O objetivo é ampliar a visão sobre o problema, levantar necessidades e transformar hipóteses em insumos concretos para o sistema.",
       "Na prática, a técnica funciona melhor quando existe um facilitador, um tema bem definido e um tempo curto de rodada para evitar que a discussão se perca. O foco inicial é quantidade de ideias, não qualidade imediata.",
@@ -90,6 +91,9 @@ function App() {
   const progress = Math.round((readCount / lessonSections.length) * 100);
 
   return (
+  <>
+    <Header isLoggedIn={true} />
+
     <main className="lesson-shell">
       <Breadcrumbs />
 
@@ -145,6 +149,7 @@ function App() {
         </article>
       </section>
     </main>
+  </>
   );
 }
 

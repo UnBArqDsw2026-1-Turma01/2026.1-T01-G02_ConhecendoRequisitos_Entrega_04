@@ -1,5 +1,5 @@
 .lesson-shell {
-  min-height: 100svh;
+  min-height: calc(100svh - 56px);
   background:
     radial-gradient(
       circle at top right,
