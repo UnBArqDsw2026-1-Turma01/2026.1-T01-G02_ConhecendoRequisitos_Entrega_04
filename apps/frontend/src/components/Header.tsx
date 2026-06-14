@@ -2,9 +2,10 @@ import "./Header.css";
 
 type HeaderProps = {
   isLoggedIn: boolean;
+  onModulesClick?: () => void;
 };
 
-export function Header({ isLoggedIn }: HeaderProps) {
+export function Header({ isLoggedIn, onModulesClick }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-logo">
@@ -16,7 +17,11 @@ export function Header({ isLoggedIn }: HeaderProps) {
 
       <nav className="header-icons">
         {isLoggedIn && (
-          <button className="icon-button" aria-label="Trilhas">
+          <button
+            className="icon-button"
+            aria-label="Módulos"
+            onClick={onModulesClick}
+          >
             <BookIcon />
           </button>
         )}
@@ -78,12 +83,7 @@ function LogoutIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M15 12H3"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M15 12H3" stroke="white" strokeWidth="2" strokeLinecap="round" />
       <path
         d="M14 4H19C20.1 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H14"
         stroke="white"
