@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enum
+// ─────────────────────────────────────────────
+
+enum TipoUsuario {
+  aluno
+  administrador
+}
+
+// ─────────────────────────────────────────────
+// Usuários (herança por tabela concreta)
+// ─────────────────────────────────────────────
+
+model Usuario {
+  email         String         @id @db.VarChar(255)
+  nome          String         @db.VarChar(150)
+  senha         String         @db.VarChar(255)
+  tipo          TipoUsuario
+
+  administrador Administrador?
+  aluno         Aluno?
+
+  @@map("usuario")
+}
+
+model Administrador {
+  email               String  @id @db.VarChar(255)
+  qtdConteudosCriados Int     @default(0)
+  qtdQuizzesCriados   Int     @default(0)
+
+  usuario             Usuario @relation(fields: [email], references: [email], onDelete: Cascade)
+
+  @@map("administrador")
+}
+
+model Aluno {
+  email         String    @id @db.VarChar(255)
+  maiorOfensiva Int       @default(0)
+  ofensivaAtual Int       @default(0)
+  ultimoAcesso  DateTime? @db.Date
+
+  usuario          Usuario           @relation(fields: [email], references: [email], onDelete: Cascade)
+  progressosTrilha ProgressoTrilha[]
+  tentativasQuiz   TentativaQuiz[]
+
+  @@map("aluno")
+}
+
+// ─────────────────────────────────────────────
+// Conteúdo
+// ─────────────────────────────────────────────
+
+model Trilha {
+  id        Int     @id @default(autoincrement())
+  titulo    String  @db.VarChar(200)
+  descricao String? @db.Text
+  ordem     Int?
+
+  modulos          Modulo[]
+  progressosTrilha ProgressoTrilha[]
+
+  @@map("trilha")
+}
+
+model Modulo {
+  id        Int     @id @default(autoincrement())
+  titulo    String  @db.VarChar(200)
+  descricao String? @db.Text
+  ordem     Int?
+  idTrilha  Int     @map("id_trilha")
+
+  trilha           Trilha            @relation(fields: [idTrilha], references: [id], onDelete: Cascade)
+  conteudos        Conteudo[]
+  quiz             Quiz?
+  progressosModulo ProgressoModulo[]
+
+  @@map("modulo")
+}
+
+model Conteudo {
+  id       Int     @id @default(autoincrement())
+  titulo   String  @db.VarChar(200)
+  corpo    String? @db.Text
+  ordem    Int?
+  idModulo Int     @map("id_modulo")
+
+  modulo             Modulo              @relation(fields: [idModulo], references: [id], onDelete: Cascade)
+  progressosConteudo ProgressoConteudo[]
+
+  @@map("conteudo")
+}
+
+// ─────────────────────────────────────────────
+// Quiz
+// ─────────────────────────────────────────────
+
+model Quiz {
+  id       Int    @id @default(autoincrement())
+  titulo   String @db.VarChar(200)
+  idModulo Int?   @unique @map("id_modulo")
+
+  modulo     Modulo?         @relation(fields: [idModulo], references: [id], onDelete: SetNull)
+  questoes   Questao[]
+  tentativas TentativaQuiz[]
+
+  @@map("quiz")
+}
+
+model Questao {
+  id        Int     @id @default(autoincrement())
+  enunciado String  @db.Text
+  status    Boolean @default(false)
+  ordem     Int?
+  idQuiz    Int     @map("id_quiz")
+
+  quiz         Quiz          @relation(fields: [idQuiz], references: [id], onDelete: Cascade)
+  alternativas Alternativa[]
+
+  @@map("questao")
+}
+
+model Alternativa {
+  id                 Int     @id @default(autoincrement())
+  descricao          String  @db.Text
+  alternativaCorreta Boolean @default(false)
+  ordem              Int?
+  idQuestao          Int     @map("id_questao")
+
+  questao Questao @relation(fields: [idQuestao], references: [id], onDelete: Cascade)
+
+  @@map("alternativa")
+}
+
+// ─────────────────────────────────────────────
+// Progresso
+// ─────────────────────────────────────────────
+
+model ProgressoTrilha {
+  id                Int       @id @default(autoincrement())
+  progresso         Int       @default(0)
+  dataDeFinalizacao DateTime? @db.Date
+  emailAluno        String    @map("email_aluno") @db.VarChar(255)
+  idTrilha          Int       @map("id_trilha")
+
+  aluno            Aluno            @relation(fields: [emailAluno], references: [email], onDelete: Cascade)
+  trilha           Trilha           @relation(fields: [idTrilha], references: [id], onDelete: Cascade)
+  progressosModulo ProgressoModulo[]
+
+  @@unique([emailAluno, idTrilha])
+  @@map("progresso_trilha")
+}
+
+model ProgressoModulo {
+  id                Int       @id @default(autoincrement())
+  progresso         Int       @default(0)
+  dataDeFinalizacao DateTime? @db.Date
+  idProgressoTrilha Int       @map("id_progresso_trilha")
+  idModulo          Int       @map("id_modulo")
+
+  progressoTrilha    ProgressoTrilha     @relation(fields: [idProgressoTrilha], references: [id], onDelete: Cascade)
+  modulo             Modulo              @relation(fields: [idModulo], references: [id], onDelete: Cascade)
+  progressosConteudo ProgressoConteudo[]
+
+  @@unique([idProgressoTrilha, idModulo])
+  @@map("progresso_modulo")
+}
+
+model ProgressoConteudo {
+  id                Int       @id @default(autoincrement())
+  status            Boolean   @default(false)
+  dataDeFinalizacao DateTime? @db.Date
+  idProgressoModulo Int       @map("id_progresso_modulo")
+  idConteudo        Int       @map("id_conteudo")
+
+  progressoModulo ProgressoModulo @relation(fields: [idProgressoModulo], references: [id], onDelete: Cascade)
+  conteudo        Conteudo        @relation(fields: [idConteudo], references: [id], onDelete: Cascade)
+
+  @@unique([idProgressoModulo, idConteudo])
+  @@map("progresso_conteudo")
+}
+
+model TentativaQuiz {
+  id                Int       @id @default(autoincrement())
+  status            Boolean   @default(false)
+  progresso         Int       @default(0)
+  dataDeFinalizacao DateTime? @db.Date
+  emailAluno        String    @map("email_aluno") @db.VarChar(255)
+  idQuiz            Int       @map("id_quiz")
+
+  aluno Aluno @relation(fields: [emailAluno], references: [email], onDelete: Cascade)
+  quiz  Quiz  @relation(fields: [idQuiz], references: [id], onDelete: Cascade)
+
+  @@map("tentativa_quiz")
+}
