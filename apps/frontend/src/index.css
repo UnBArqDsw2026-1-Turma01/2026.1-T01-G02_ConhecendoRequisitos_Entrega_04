@@ -55,7 +55,6 @@ select {
 @media (max-width: 1024px) {
   #root {
     width: 100%;
-    border-inline: none;
-    box-shadow: none;
+    min-height: 100vh;
   }
 }
