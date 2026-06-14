@@ -1,11 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "./styles/tokens.css";
+
 :root {
-  color: #25243f;
+  color: var(--cr-text-primary);
   background: #eef1f7;
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--cr-font-sans);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Breadcrumb clickable link style */
+.breadcrumbs__link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--cr-purple-600);
+  font: inherit;
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--cr-transition-fast);
+}
+
+.breadcrumbs__link:hover {
+  color: var(--cr-purple-800);
 }
 
 * {
@@ -43,6 +64,11 @@ select {
 }
 
 #root {
+  min-height: 100vh;
+}
+
+/* Container centralizado — usado pelas páginas, não pelo Header */
+.page-content {
   width: min(1126px, 100%);
   min-height: 100vh;
   margin: 0 auto;
@@ -53,7 +79,7 @@ select {
 }
 
 @media (max-width: 1024px) {
-  #root {
+  .page-content {
     width: 100%;
     min-height: 100vh;
   }

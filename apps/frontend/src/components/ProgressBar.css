@@ -1,0 +1,77 @@
+.cr-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.cr-progress__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cr-progress__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--cr-text-secondary);
+}
+
+.cr-progress__pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--cr-text-primary);
+  min-width: 2.5ch;
+  text-align: right;
+}
+
+/* ── Trilha ── */
+.cr-progress__track {
+  width: 100%;
+  border-radius: var(--cr-radius-full);
+  background: var(--cr-gray-200);
+  overflow: hidden;
+}
+
+.cr-progress__track--sm { height: 6px; }
+.cr-progress__track--md { height: 8px; }
+
+/* ── Fill ── */
+.cr-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0ms;
+}
+
+.cr-progress__fill--animated {
+  transition: width 500ms cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+/* Variante purple (padrão de trilhas) */
+.cr-progress__fill--purple {
+  background: linear-gradient(
+    90deg,
+    var(--cr-purple-600) 0%,
+    var(--cr-purple-400) 100%
+  );
+}
+
+/* Variante green (conclusão de lição) */
+.cr-progress__fill--green {
+  background: linear-gradient(
+    90deg,
+    var(--cr-green-600) 0%,
+    var(--cr-green-500) 100%
+  );
+}
+
+/* ── Versão sobre fundo escuro (herói) ── */
+.cr-progress--on-dark .cr-progress__track {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.cr-progress--on-dark .cr-progress__label,
+.cr-progress--on-dark .cr-progress__pct {
+  color: rgba(255, 255, 255, 0.85);
+}
