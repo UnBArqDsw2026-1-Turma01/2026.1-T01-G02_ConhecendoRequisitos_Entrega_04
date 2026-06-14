@@ -1,8 +1,8 @@
 import { LoginPage } from "./pages/LoginPage";
-// import { LessonPage } from "./pages/LessonPage";
+//import { LessonPage } from "./pages/LessonPage";
 
 function App() {
-  return <LoginPage />;
+  return <LoginPage/>;
 }
 
 export default App;
