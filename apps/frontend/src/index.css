@@ -81,7 +81,6 @@ select {
 @media (max-width: 1024px) {
   .page-content {
     width: 100%;
-    border-inline: none;
-    box-shadow: none;
+    min-height: 100vh;
   }
 }
