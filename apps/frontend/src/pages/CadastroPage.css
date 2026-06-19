@@ -11,7 +11,7 @@ body,
 }
 
 body {
-    overflow: hidden;
+    overflow: auto;
 }
 
 .login-page {
@@ -23,6 +23,7 @@ body {
     width: 100%;
     min-height: 100svh;
     display: flex;
+    overflow: hidden;
 }
 
 .login-container {
@@ -145,10 +146,6 @@ body {
 }
 
 @media (max-width: 850px) {
-    body {
-        overflow: auto;
-    }
-
     .login-container {
         grid-template-columns: 1fr;
     }

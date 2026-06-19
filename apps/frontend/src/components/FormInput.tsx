@@ -1,16 +1,17 @@
+import type { InputHTMLAttributes } from "react";
 import "./FormInput.css";
 
 type FormInputProps = {
     label: string;
-    type: string;
-    name: string;
-};
+} & InputHTMLAttributes<HTMLInputElement>;
 
-export function FormInput({ label, type, name }: FormInputProps) {
+export function FormInput({ label, id, name, ...inputProps }: FormInputProps) {
+    const inputId = id ?? name;
+
     return (
     <label className="form-input">
         <span>{label}</span>
-        <input type={type} name={name} />
+        <input id={inputId} name={name} {...inputProps} />
     </label>
     );
 }

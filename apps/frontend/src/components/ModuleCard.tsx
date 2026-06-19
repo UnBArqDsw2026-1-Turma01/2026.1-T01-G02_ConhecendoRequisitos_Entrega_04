@@ -13,7 +13,7 @@
 import { Badge, type BadgeVariant } from "./Badge";
 import "./ModuleCard.css";
 
-export type ModuleStatus = "concluido" | "em-progresso" | "bloqueado";
+export type ModuleStatus = "LOCKED" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 
 export interface ModuleCardProps {
   /** Número exibido como "MÓDULO N" */
@@ -71,18 +71,34 @@ function LockIcon() {
 }
 
 const ICON_MAP: Record<ModuleStatus, React.FC> = {
-  "concluido":    CheckIcon,
-  "em-progresso": HourglassIcon,
-  "bloqueado":    LockIcon,
+  "COMPLETED":   CheckIcon,
+  "IN_PROGRESS": HourglassIcon,
+  "NOT_STARTED": HourglassIcon,
+  "LOCKED":      LockIcon,
 };
 
 const BUTTON_CONFIG: Record<
   ModuleStatus,
   { label: string; variant: "outline" | "filled" | "disabled" }
 > = {
-  "concluido":    { label: "Revisar Módulo",  variant: "outline"   },
-  "em-progresso": { label: "Iniciar Módulo",  variant: "filled"    },
-  "bloqueado":    { label: "Iniciar Módulo",  variant: "disabled"  },
+  "COMPLETED":   { label: "Revisar Módulo", variant: "outline" },
+  "IN_PROGRESS": { label: "Continuar Módulo", variant: "filled" },
+  "NOT_STARTED": { label: "Iniciar Módulo", variant: "filled" },
+  "LOCKED":      { label: "Iniciar Módulo", variant: "disabled" },
+};
+
+const BADGE_MAP: Record<ModuleStatus, { variant: BadgeVariant; label?: string }> = {
+  COMPLETED: { variant: "concluido" },
+  IN_PROGRESS: { variant: "em-progresso" },
+  NOT_STARTED: { variant: "em-progresso", label: "NÃO INICIADO" },
+  LOCKED: { variant: "bloqueado" },
+};
+
+const CLASS_SUFFIX_MAP: Record<ModuleStatus, string> = {
+  COMPLETED: "concluido",
+  IN_PROGRESS: "em-progresso",
+  NOT_STARTED: "em-progresso",
+  LOCKED: "bloqueado",
 };
 
 /* ── Componente ────────────────────────────────────────────── */
@@ -96,15 +112,17 @@ export function ModuleCard({
 }: ModuleCardProps) {
   const Icon   = ICON_MAP[status];
   const button = BUTTON_CONFIG[status];
-  const isDisabled = status === "bloqueado";
+  const badge = BADGE_MAP[status];
+  const classSuffix = CLASS_SUFFIX_MAP[status];
+  const isDisabled = status === "LOCKED";
 
   return (
     <article
-      className={`module-card module-card--${status}`}
+      className={`module-card module-card--${classSuffix}`}
       aria-label={`Módulo ${number}: ${title}`}
     >
       {/* Ícone de status */}
-      <div className={`module-card__icon module-card__icon--${status}`} aria-hidden="true">
+      <div className={`module-card__icon module-card__icon--${classSuffix}`} aria-hidden="true">
         <Icon />
       </div>
 
@@ -113,7 +131,7 @@ export function ModuleCard({
         {/* Linha superior: número + badge */}
         <div className="module-card__top">
           <span className="module-card__number">MÓDULO {number}</span>
-          <Badge variant={status as BadgeVariant} />
+          <Badge variant={badge.variant} label={badge.label} />
         </div>
 
         <h3 className="module-card__title">{title}</h3>

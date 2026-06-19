@@ -1,11 +1,31 @@
 import "./Header.css";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useProgressStore } from '../stores/progressStore';
 
 type HeaderProps = {
-  isLoggedIn: boolean;
   onModulesClick?: () => void;
 };
 
-export function Header({ isLoggedIn, onModulesClick }: HeaderProps) {
+export function Header({ onModulesClick }: HeaderProps) {
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+
+  const handleModulesClick = () => {
+    if (onModulesClick) {
+      onModulesClick();
+      return;
+    }
+
+    navigate('/trilhas');
+  };
+
+  const handleLogout = () => {
+    logout();
+    useProgressStore.getState().clearProgress();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <header className="header">
       <div className="header-logo">
@@ -16,11 +36,11 @@ export function Header({ isLoggedIn, onModulesClick }: HeaderProps) {
       </div>
 
       <nav className="header-icons">
-        {isLoggedIn && (
+        {isAuthenticated && (
           <button
             className="icon-button"
             aria-label="Módulos"
-            onClick={onModulesClick}
+            onClick={handleModulesClick}
           >
             <BookIcon />
           </button>
@@ -30,8 +50,8 @@ export function Header({ isLoggedIn, onModulesClick }: HeaderProps) {
           <UserIcon />
         </button>
 
-        {isLoggedIn && (
-          <button className="icon-button" aria-label="Sair">
+        {isAuthenticated && (
+          <button className="icon-button" aria-label="Sair" onClick={handleLogout}>
             <LogoutIcon />
           </button>
         )}

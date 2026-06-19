@@ -1,13 +1,13 @@
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import "./PrimaryButton.css";
 
 type PrimaryButtonProps = {
-    children: React.ReactNode;
-    type?: "button" | "submit";
-};
+    children: ReactNode;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function PrimaryButton({ children, type = "button" }: PrimaryButtonProps) {
+export function PrimaryButton({ children, type = "button", ...buttonProps }: PrimaryButtonProps) {
     return (
-    <button className="primary-button" type={type}>
+    <button className="primary-button" type={type} {...buttonProps}>
         {children}
     </button>
     );

@@ -17,6 +17,12 @@ enum TipoUsuario {
   administrador
 }
 
+enum StatusProgresso {
+  nao_iniciado
+  em_andamento
+  concluido
+}
+
 // ─────────────────────────────────────────────
 // Usuários (herança por tabela concreta)
 // ─────────────────────────────────────────────
@@ -26,6 +32,11 @@ model Usuario {
   nome          String         @db.VarChar(150)
   senha         String         @db.VarChar(255)
   tipo          TipoUsuario
+  
+  // Campos de autenticação e recuperação de senha
+  email_verificado      Boolean        @default(false)
+  token_recuperacao     String?        @unique
+  data_expiracao_token  DateTime?
 
   administrador Administrador?
   aluno         Aluno?
@@ -147,8 +158,11 @@ model Alternativa {
 
 model ProgressoTrilha {
   id                Int       @id @default(autoincrement())
+  status            StatusProgresso @default(nao_iniciado)
   progresso         Int       @default(0)
+  dataInicio        DateTime?
   dataDeFinalizacao DateTime? @db.Date
+  dataUltimaAtualizacao DateTime @updatedAt
   emailAluno        String    @map("email_aluno") @db.VarChar(255)
   idTrilha          Int       @map("id_trilha")
 
@@ -162,8 +176,11 @@ model ProgressoTrilha {
 
 model ProgressoModulo {
   id                Int       @id @default(autoincrement())
+  status            StatusProgresso @default(nao_iniciado)
   progresso         Int       @default(0)
+  dataInicio        DateTime?
   dataDeFinalizacao DateTime? @db.Date
+  dataUltimaAtualizacao DateTime @updatedAt
   idProgressoTrilha Int       @map("id_progresso_trilha")
   idModulo          Int       @map("id_modulo")
 
@@ -191,14 +208,17 @@ model ProgressoConteudo {
 
 model TentativaQuiz {
   id                Int       @id @default(autoincrement())
-  status            Boolean   @default(false)
+  status            StatusProgresso @default(nao_iniciado)
   progresso         Int       @default(0)
+  dataInicio        DateTime?
   dataDeFinalizacao DateTime? @db.Date
+  dataUltimaAtualizacao DateTime @updatedAt
   emailAluno        String    @map("email_aluno") @db.VarChar(255)
   idQuiz            Int       @map("id_quiz")
 
   aluno Aluno @relation(fields: [emailAluno], references: [email], onDelete: Cascade)
   quiz  Quiz  @relation(fields: [idQuiz], references: [id], onDelete: Cascade)
 
+  @@unique([emailAluno, idQuiz])
   @@map("tentativa_quiz")
 }

@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header} from "../components/Header";
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import { ContentPreview } from "../components/ContentPreview";
 import { LessonSection } from "../components/LessonSection";
 import { ReadingSidebar } from "../components/ReadingSidebar";
+import type { ReadingSidebarItemState } from "../components/ReadingSidebar";
+import { useNavigate, useParams } from "react-router-dom";
+import { trailsService } from "../services/trails.service";
+import { useProgressStore } from "../stores/progressStore";
 import "./LessonPage.css";
 
 const lessonSections = [
@@ -72,16 +76,92 @@ const createInitialReadState = () =>
     {} as Record<LessonSectionId, boolean>,
     );
 
+const getReadStateFromPercent = (percent: number) => {
+    const clampedPercent = Math.min(100, Math.max(0, percent));
+    const sectionsToMark = Math.round((clampedPercent / 100) * lessonSections.length);
+    const nextState = createInitialReadState();
+
+    lessonSections.forEach((section, index) => {
+        if (index < sectionsToMark) {
+            nextState[section.id] = true;
+        }
+    });
+
+    return nextState;
+};
+
 export function LessonPage() {
+    const navigate = useNavigate();
+    const { trailId, lessonId } = useParams<{ trailId: string; lessonId: string }>();
+    const setProgressData = useProgressStore((state) => state.setProgressData);
     const [readSections, setReadSections] = useState<
     Record<LessonSectionId, boolean>
     >(createInitialReadState);
 
+    const numericTrailId = Number(trailId);
+    const numericLessonId = Number(lessonId);
+
+    useEffect(() => {
+        const loadProgress = async () => {
+            if (Number.isNaN(numericTrailId) || Number.isNaN(numericLessonId)) {
+                return;
+            }
+
+            try {
+                const progress = await trailsService.getProgress();
+                setProgressData(progress);
+
+                const lessonProgress = progress.trilhas
+                    ?.flatMap((trilha: any) => trilha.aulas || [])
+                    ?.find((aula: any) => aula.trilhaId === numericTrailId && aula.moduloId === numericLessonId);
+
+                if (lessonProgress) {
+                    setReadSections(getReadStateFromPercent(lessonProgress.percentualConcluido));
+                }
+            } catch {
+                // Mantém progresso local caso o backend não responda
+            }
+        };
+
+        loadProgress();
+    }, [numericTrailId, numericLessonId, setProgressData]);
+
+    const syncProgress = async (nextState: Record<LessonSectionId, boolean>) => {
+        if (Number.isNaN(numericTrailId) || Number.isNaN(numericLessonId)) {
+            return;
+        }
+
+        const nextReadCount = lessonSections.reduce(
+            (count, section) => count + (nextState[section.id] ? 1 : 0),
+            0,
+        );
+        const nextProgress = Math.round((nextReadCount / lessonSections.length) * 100);
+
+        try {
+            await trailsService.startLesson(numericTrailId, numericLessonId);
+            await trailsService.updateLessonProgress(numericTrailId, numericLessonId, nextProgress);
+
+            if (nextProgress >= 100) {
+                await trailsService.completeLesson(numericTrailId, numericLessonId);
+            }
+
+            await trailsService.updateTrailProgress(numericTrailId, nextProgress);
+            const progress = await trailsService.getProgress();
+            setProgressData(progress);
+        } catch {
+            // Em caso de erro, mantém experiência local sem bloquear leitura
+        }
+    };
+
     const toggleSectionRead = (sectionId: LessonSectionId) => {
-    setReadSections((current) => ({
-        ...current,
-        [sectionId]: !current[sectionId],
-    }));
+    setReadSections((current) => {
+        const nextState = {
+            ...current,
+            [sectionId]: !current[sectionId],
+        };
+        void syncProgress(nextState);
+        return nextState;
+    });
     };
 
     const readCount = lessonSections.reduce(
@@ -89,21 +169,45 @@ export function LessonPage() {
     0,
     );
   const progress = Math.round((readCount / lessonSections.length) * 100);
+        const isLessonCompleted = progress === 100;
+    const firstUnreadIndex = lessonSections.findIndex(
+        (section) => !readSections[section.id],
+    );
+
+    const sidebarItems: Array<{ label: string; state: ReadingSidebarItemState }> = lessonSections.map((section, index) => ({
+        label: section.title,
+        state: readSections[section.id]
+            ? "done"
+            : index === firstUnreadIndex
+                ? "current"
+                : "pending",
+    }));
+
+    const handleGoToExercises = () => {
+        if (!trailId || !lessonId) {
+            return;
+        }
+
+        navigate(`/trails/${trailId}/lesson/${lessonId}/exercicios`);
+    };
 
     return (
     <>
-    <Header isLoggedIn={true} />
+    <Header />
 
     <main className="lesson-shell">
-        <Breadcrumbs />
+                <Breadcrumbs
+                    items={[
+                        { label: "Trilhas" },
+                        { label: "Técnicas de elicitação de requisitos" },
+                    ]}
+                />
 
         <section className="lesson-layout" aria-label="Conteúdo da trilha">
         <ReadingSidebar
             progress={progress}
-            items={lessonSections.map((section) => ({
-            label: section.title,
-            read: readSections[section.id],
-            }))}
+                        progressLabel={`${progress}% concluído`}
+                        items={sidebarItems}
         />
 
         <article className="lesson-content">
@@ -146,6 +250,18 @@ export function LessonPage() {
             read={readSections.fechamento}
             onMarkRead={() => toggleSectionRead("fechamento")}
             />
+
+                        {isLessonCompleted && (
+                            <div className="lesson-actions">
+                                <button
+                                    type="button"
+                                    className="finish-button"
+                                    onClick={handleGoToExercises}
+                                >
+                                    Exercícios
+                                </button>
+                            </div>
+                        )}
         </article>
         </section>
     </main>
