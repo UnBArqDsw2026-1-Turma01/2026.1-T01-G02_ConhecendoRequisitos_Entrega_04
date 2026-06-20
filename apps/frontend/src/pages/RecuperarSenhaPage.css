@@ -1,24 +1,7 @@
-* {
-    box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-    margin: 0;
-    width: 100%;
-    min-height: 100%;
-}
-
 .recover-page {
     min-height: 100vh;
 
-    background: linear-gradient(
-        135deg,
-        #32004f 0%,
-        #7300a3 100%
-    );
-
+    background: var( --cr-gradient-primary);
     position: relative;
 
     display: flex;
@@ -42,7 +25,7 @@ body,
     background: transparent;
     border: none;
 
-    color: white;
+    color: var( --cr-text-secondary);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -70,10 +53,10 @@ body,
     width: 92%;
     max-width: 860px;
 
-    background: #ffffff;
+    background: var(--cr-white-primary);
 
-    border: 2px solid #6a1b9a;
-    border-radius: 20px;
+    border: 2px solid var(--cr-border);
+    border-radius: var(--cr-radius-lg);
 
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 
@@ -96,9 +79,9 @@ body,
     width: 180px;
     height: 180px;
 
-    background: white;
+    background: var(--cr-white-primary);
     border-radius: 50%;
-    border: 3px solid #6a1b9a;
+    border: 3px solid var(--cr-purple-assistant);
 
     display: flex;
     justify-content: center;
@@ -112,8 +95,6 @@ body,
     height: 120px;
     object-fit: contain;
 }
-
-/* ── TÍTULO ── */
 
 .recover-title {
     margin: 0 0 20px;

@@ -5,6 +5,8 @@
 
 :root {
   /* ── Brand ── */
+  --cr-purple-primary: #2b0041;
+  --cr-purple-assistant: #5e0989;
   --cr-purple-950: #1a0433;
   --cr-purple-900: #2d0a4e;
   --cr-purple-800: #4b0082;
@@ -15,8 +17,15 @@
   --cr-purple-200: #e9d5ff;
   --cr-purple-100: #f3e8ff;
   --cr-purple-50:  #faf5ff;
+  --cr-gradient-primary: linear-gradient(
+        90deg,
+        var(--cr-purple-primary) 11%,
+        var(--cr-purple-assistant) 94%
+    );
+  --cr-white-primary: #ffffff;
 
   /* ── Status: Concluído ── */
+  --cr-green-primary: #319d2f;
   --cr-green-700: #15803d;
   --cr-green-600: #16a34a;
   --cr-green-500: #22c55e;
@@ -24,6 +33,7 @@
   --cr-green-50:  #f0fdf4;
 
   /* ── Status: Em Progresso ── */
+  --cr-yellow-primary: #f1b10b; 
   --cr-amber-600: #d97706;
   --cr-amber-500: #f59e0b;
   --cr-amber-400: #fbbf24;
@@ -40,10 +50,10 @@
   --cr-gray-50:  #f9fafb;
 
   /* ── Semantic ── */
-  --cr-brand:           var(--cr-purple-600);
-  --cr-brand-dark:      var(--cr-purple-800);
-  --cr-text-primary:    #1c1b2e;
-  --cr-text-secondary:  #4a5568;
+  --cr-brand:           var(--cr-purple-assistant);
+  --cr-brand-dark:      var(--cr-purple-primary);
+  --cr-text-primary:    #000000;
+  --cr-text-secondary:  #ffffff;
   --cr-text-muted:      #6b7280;
   --cr-surface:         #ffffff;
   --cr-surface-raised:  rgba(255, 255, 255, 0.85);
@@ -57,11 +67,11 @@
   --cr-shadow-lg: 0 16px 40px rgba(62, 17, 88, 0.14);
 
   /* ── Border Radius ── */
-  --cr-radius-xs:   6px;
+  --cr-radius-xs:   4px;
   --cr-radius-sm:   8px;
   --cr-radius-md:   12px;
-  --cr-radius-lg:   16px;
-  --cr-radius-xl:   20px;
+  --cr-radius-lg:   30px;
+  --cr-radius-xl:   34px;
   --cr-radius-full: 9999px;
 
   /* ── Transitions ── */
