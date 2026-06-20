@@ -94,9 +94,9 @@ export function CadastroPage() {
     };
 
     return (
-        <main className="login-page cadastro-mode">
-            <section className="login-container">
-                <div className="login-left">
+        <main className="cadastro-page">
+            <section className="cadastro-container">
+                <div className="cadastro-left">
                     <button
                         type="button"
                         className="back-button"
@@ -109,16 +109,16 @@ export function CadastroPage() {
                     <img
                         src={logo2}
                         alt="Conhecendo Requisitos"
-                        className="login-image"
+                        className="cadastro-image"
                     />
 
-                    <h1 className="login-title">
+                    <h1 className="cadastro-title">
                         <span>Conhecendo</span>
                         <strong>Requisitos</strong>
                     </h1>
                 </div>
 
-                <div className="login-right">
+                <div className="cadastro-right">
                     <img
                         src={logoUnB}
                         alt="Logo da UnB"
@@ -126,7 +126,7 @@ export function CadastroPage() {
                     />
 
                     <form
-                        className="login-form"
+                        className="cadastro-form"
                         onSubmit={handleSubmit}
                     >
                         {errors.form && (
