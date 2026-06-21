@@ -43,12 +43,18 @@ export interface Module {
   descricao?: string;
   ordem?: number;
   idTrilha: number;
+  conteudos?: Content[];
+  quiz?: {
+    id: number;
+    titulo: string;
+  };
 }
 
 export interface Content {
   id: number;
   titulo: string;
-  conteudo: string;
+  conteudo?: string;
+  corpo?: string;
   ordem?: number;
   idModulo: number;
 }
@@ -57,6 +63,7 @@ export interface Quiz {
   id: number;
   titulo: string;
   idModulo: number;
+  questoes?: any[];
 }
 
 export interface Progress {

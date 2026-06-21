@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Breadcrumbs } from "../components/Breadcrumbs";
@@ -13,7 +13,9 @@ import {
 import { trailsService } from "../services/trails.service";
 import "./LessonPage.css";
 
-const QUESTIONS: QuizQuestion[] = [
+const LETTERS = ["A", "B", "C", "D", "E", "F"];
+
+const MOCK_QUESTIONS: QuizQuestion[] = [
   {
     id: "q1",
     title: "Questao 1",
@@ -58,34 +60,132 @@ const QUESTIONS: QuizQuestion[] = [
   },
 ];
 
-function createInitialAnswers() {
-  return QUESTIONS.reduce((accumulator, question) => {
-    accumulator[question.id] = null;
-    return accumulator;
-  }, {} as QuizAnswerMap);
-}
-
 export function QuizPage() {
   const navigate = useNavigate();
   const { trailId, lessonId } = useParams<{ trailId: string; lessonId: string }>();
   const numericTrailId = Number(trailId);
   const numericLessonId = Number(lessonId);
 
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isAttemptStarted, setIsAttemptStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<QuizAnswerMap>(createInitialAnswers);
+  const [answers, setAnswers] = useState<QuizAnswerMap>({});
   const [attempts, setAttempts] = useState(0);
   const [lastScore, setLastScore] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [moduleTitle, setModuleTitle] = useState("Exercícios");
+
+  useEffect(() => {
+    const loadQuizData = async () => {
+      if (Number.isNaN(numericLessonId)) {
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        // 1. Obter módulo para achar o quizId e título
+        const moduleData = await trailsService.getModule(numericLessonId);
+        setModuleTitle(moduleData.titulo);
+
+        if (moduleData.quiz?.id) {
+          // 2. Obter quiz com as questões e alternativas
+          const quizData = await trailsService.getQuiz(moduleData.quiz.id);
+          
+          if (quizData.questoes && quizData.questoes.length > 0) {
+            // Ordenar questões
+            const sortedQuestoes = [...quizData.questoes].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+            const mappedQuestions = sortedQuestoes.map((questao: any, qIndex: number) => {
+              const sortedAlts = [...(questao.alternativas ?? [])].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+              const options = sortedAlts.map((alt: any, aIndex: number) => ({
+                id: String(alt.id),
+                letter: LETTERS[aIndex] || "?",
+                text: alt.descricao,
+              }));
+
+              const correctAlt = sortedAlts.find((alt: any) => alt.alternativaCorreta);
+              const correctOptionId = correctAlt ? String(correctAlt.id) : "";
+
+              // Tentar fazer o parse do enunciado como JSON
+              let prompt = questao.enunciado;
+              let title = `Questão ${qIndex + 1}`;
+              let explanation = "Explicação indisponível no banco de dados.";
+
+              try {
+                const parsed = typeof questao.enunciado === 'string' ? JSON.parse(questao.enunciado) : questao.enunciado;
+                if (parsed && typeof parsed === 'object') {
+                  prompt = parsed.prompt || prompt;
+                  title = parsed.title || title;
+                  explanation = parsed.explanation || explanation;
+                }
+              } catch (e) {
+                // Mantém valores padrão se não for JSON válido
+              }
+
+              return {
+                id: String(questao.id),
+                title,
+                prompt,
+                options,
+                correctOptionId,
+                explanation,
+              };
+            });
+            setQuestions(mappedQuestions);
+            
+            // Inicializar respostas vazias
+            const initialAnswers = mappedQuestions.reduce((acc: QuizAnswerMap, q: QuizQuestion) => {
+              acc[q.id] = null;
+              return acc;
+            }, {} as QuizAnswerMap);
+            setAnswers(initialAnswers);
+          } else {
+            // Módulo existe mas sem questões, fallback mock
+            setQuestions(MOCK_QUESTIONS);
+            const initialAnswers = MOCK_QUESTIONS.reduce((acc: QuizAnswerMap, q: QuizQuestion) => {
+              acc[q.id] = null;
+              return acc;
+            }, {} as QuizAnswerMap);
+            setAnswers(initialAnswers);
+          }
+        } else {
+          // Sem quiz cadastrado, fallback mock
+          setQuestions(MOCK_QUESTIONS);
+          const initialAnswers = MOCK_QUESTIONS.reduce((acc: QuizAnswerMap, q: QuizQuestion) => {
+            acc[q.id] = null;
+            return acc;
+          }, {} as QuizAnswerMap);
+          setAnswers(initialAnswers);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar quiz:", err);
+        // Fallback total para mock
+        setQuestions(MOCK_QUESTIONS);
+        const initialAnswers = MOCK_QUESTIONS.reduce((acc: QuizAnswerMap, q: QuizQuestion) => {
+          acc[q.id] = null;
+          return acc;
+        }, {} as QuizAnswerMap);
+        setAnswers(initialAnswers);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadQuizData();
+  }, [numericLessonId]);
 
   const hasSavedAttempt = useMemo(
     () => Object.values(answers).some((value) => value !== null),
     [answers],
   );
 
-  const currentQuestion = QUESTIONS[currentQuestionIndex];
+  const currentQuestion = questions[currentQuestionIndex];
 
   const handleStartNew = () => {
-    setAnswers(createInitialAnswers());
+    const initialAnswers = questions.reduce((acc, q) => {
+      acc[q.id] = null;
+      return acc;
+    }, {} as QuizAnswerMap);
+    setAnswers(initialAnswers);
     setCurrentQuestionIndex(0);
     setIsAttemptStarted(true);
   };
@@ -94,11 +194,11 @@ export function QuizPage() {
     if (!hasSavedAttempt) {
       return;
     }
-
     setIsAttemptStarted(true);
   };
 
   const handleSelectOption = (optionId: string) => {
+    if (!currentQuestion) return;
     setAnswers((currentAnswers) => ({
       ...currentAnswers,
       [currentQuestion.id]: optionId,
@@ -111,12 +211,12 @@ export function QuizPage() {
 
   const handleNext = () => {
     setCurrentQuestionIndex((index) =>
-      Math.min(index + 1, QUESTIONS.length - 1),
+      Math.min(index + 1, questions.length - 1),
     );
   };
 
   const handleFinish = async () => {
-    const score = calculateQuizScore(QUESTIONS, answers);
+    const score = calculateQuizScore(questions, answers);
     setLastScore(score);
     setAttempts((value) => value + 1);
     setIsAttemptStarted(false);
@@ -136,13 +236,37 @@ export function QuizPage() {
       navigate("/trails");
       return;
     }
-
     navigate(`/trails/${trailId}/lesson/${lessonId}`);
   };
 
   const handleBackToTrails = () => {
     navigate("/trails");
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <main className="lesson-shell">
+          <p style={{ padding: "2rem", textAlign: "center" }}>Carregando exercícios...</p>
+        </main>
+      </>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <>
+        <Header />
+        <main className="lesson-shell">
+          <p style={{ padding: "2rem", textAlign: "center" }}>Nenhum exercício disponível para esta lição.</p>
+          <div style={{ textAlign: "center" }}>
+            <button onClick={handleBackToLesson} className="finish-button">Voltar para a lição</button>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -152,14 +276,14 @@ export function QuizPage() {
         <Breadcrumbs
           items={[
             { label: "Trilhas", onClick: handleBackToTrails },
-            { label: "Licao", onClick: handleBackToLesson },
-            { label: "Exercicios" },
+            { label: moduleTitle, onClick: handleBackToLesson },
+            { label: "Exercícios" },
           ]}
         />
 
         <section className="lesson-layout" aria-label="Exercicios da licao">
           <QuizSidebar
-            questions={QUESTIONS}
+            questions={questions}
             answers={answers}
             currentQuestionIndex={currentQuestionIndex}
           />
@@ -167,7 +291,7 @@ export function QuizPage() {
           <article className="lesson-content">
             {!isAttemptStarted ? (
               <QuizIntroCard
-                title="Exercicios da licao"
+                title={`Exercícios: ${moduleTitle}`}
                 canStart={true}
                 hasSavedAttempt={hasSavedAttempt}
                 attempts={attempts}
@@ -179,7 +303,7 @@ export function QuizPage() {
               <QuizQuestionCard
                 question={currentQuestion}
                 questionIndex={currentQuestionIndex}
-                questionCount={QUESTIONS.length}
+                questionCount={questions.length}
                 selectedOptionId={answers[currentQuestion.id]}
                 onSelectOption={handleSelectOption}
                 onPrevious={handlePrevious}

@@ -239,6 +239,9 @@ async function main() {
         {
           id: 'conceito',
           title: 'O que é brainstorming?',
+          videoUrl: 'https://www.youtube-nocookie.com/embed/kKAZGA1v3cw',
+          videoTitle: 'Técnicas de brainstorming para projetos individuais e em equipe',
+          videoCaption: 'Vídeo de apoio sobre técnicas de brainstorming para equipes e projetos.',
           paragraphs: [
             'Brainstorming é uma técnica de elicitação de requisitos usada para gerar ideias em grupo, sem críticas prematuras. O objetivo é ampliar a visão sobre o problema, levantar necessidades e transformar hipóteses em insumos concretos para o sistema.',
             'Na prática, a técnica funciona melhor quando existe um facilitador, um tema bem definido e um tempo curto de rodada para evitar que a discussão se perca. O foco inicial é quantidade de ideias, não qualidade imediata.'
@@ -299,6 +302,9 @@ async function main() {
         {
           id: 'entrevista-intro',
           title: 'A Técnica de Entrevistas',
+          videoUrl: 'https://www.youtube-nocookie.com/embed/gLlh6bUf1Lg',
+          videoTitle: 'Introdução à Elicitação de Requisitos por Entrevistas',
+          videoCaption: 'Entenda como conduzir entrevistas semiestruturadas com foco em Engenharia de Software.',
           paragraphs: [
             'A entrevista é uma das técnicas mais tradicionais e diretas de elicitação de requisitos. Consiste em uma conversa formal ou informal entre o analista e as partes interessadas para extrair informações específicas sobre suas necessidades.',
             'Podem ser estruturadas (com perguntas pré-definidas), semiestruturadas (com um roteiro flexível) ou não estruturadas (conversas livres).'
@@ -765,6 +771,34 @@ async function main() {
             { descricao: 'Podem se dispersar facilmente e dificultar a consolidação dos dados.', alternativaCorreta: true, ordem: 2 },
             { descricao: 'Exigem ferramentas digitais caras para serem conduzidas.', alternativaCorreta: false, ordem: 3 },
             { descricao: 'Não permitem contato direto com o entrevistado.', alternativaCorreta: false, ordem: 4 }
+          ]
+        },
+        {
+          enunciado: JSON.stringify({
+            title: 'Questão 4',
+            prompt: 'Qual técnica de elicitação incentiva os participantes a pensarem em formas de sabotar ou piorar o problema para então reverter em soluções?',
+            explanation: 'O brainstorming reverso foca em listar maneiras de exacerbar o problema para depois encontrar formas de mitigação.'
+          }),
+          ordem: 4,
+          alternativas: [
+            { descricao: 'Brainwriting', alternativaCorreta: false, ordem: 1 },
+            { descricao: 'Brainstorming reverso', alternativaCorreta: true, ordem: 2 },
+            { descricao: 'Entrevista estruturada', alternativaCorreta: false, ordem: 3 },
+            { descricao: 'Questionário fechado', alternativaCorreta: false, ordem: 4 }
+          ]
+        },
+        {
+          enunciado: JSON.stringify({
+            title: 'Questão 5',
+            prompt: 'Como o processo de Brainwriting ajuda participantes mais tímidos ou introvertidos?',
+            explanation: 'O brainwriting pede que as pessoas escrevam suas ideias em silêncio primeiro, dando espaço igual de expressão para todos.'
+          }),
+          ordem: 5,
+          alternativas: [
+            { descricao: 'Exigindo que falem mais alto na reunião.', alternativaCorreta: false, ordem: 1 },
+            { descricao: 'Permitindo que registrem suas ideias por escrito antes da discussão em grupo.', alternativaCorreta: true, ordem: 2 },
+            { descricao: 'Eliminando a necessidade de qualquer comunicação.', alternativaCorreta: false, ordem: 3 },
+            { descricao: 'Forçando-os a liderar a facilitação do brainstorming.', alternativaCorreta: false, ordem: 4 }
           ]
         }
       ]

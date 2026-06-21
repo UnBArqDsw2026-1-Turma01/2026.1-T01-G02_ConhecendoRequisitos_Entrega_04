@@ -1,13 +1,21 @@
-export function ContentPreview() {
+interface ContentPreviewProps {
+  videoUrl?: string;
+  title?: string;
+  caption?: string;
+}
+
+export function ContentPreview({ videoUrl, title, caption }: ContentPreviewProps) {
+  if (!videoUrl) return null;
+
   return (
     <figure
       className="video-card"
-      aria-label="Vídeo embutido sobre brainstorming"
+      aria-label={caption || "Vídeo embutido"}
     >
       <div className="video-card__frame">
         <iframe
-          title="Técnicas de brainstorming para projetos individuais e em equipe"
-          src="https://www.youtube-nocookie.com/embed/kKAZGA1v3cw"
+          title={title || "Vídeo de apoio"}
+          src={videoUrl}
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -16,7 +24,7 @@ export function ContentPreview() {
       </div>
 
       <figcaption className="video-card__footer">
-        Vídeo de apoio sobre técnicas de brainstorming para equipes e projetos.
+        {caption || "Vídeo de apoio."}
       </figcaption>
     </figure>
   );

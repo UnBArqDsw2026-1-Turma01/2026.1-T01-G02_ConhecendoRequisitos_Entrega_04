@@ -21,11 +21,13 @@ export function calculateQuizScore(
   questions: readonly QuizQuestion[],
   answers: QuizAnswerMap,
 ) {
+  if (questions.length === 0) return 0;
+
   const correctCount = questions.reduce((count, question) => {
     return count + (answers[question.id] === question.correctOptionId ? 1 : 0);
   }, 0);
 
-  return Number((correctCount * 2).toFixed(1));
+  return Number(((correctCount / questions.length) * 10).toFixed(1));
 }
 
 function formatScore(score: number | null) {

@@ -10,7 +10,7 @@ import { trailsService } from "../services/trails.service";
 import { useProgressStore } from "../stores/progressStore";
 import "./LessonPage.css";
 
-const lessonSections = [
+const MOCK_LESSON_SECTIONS = [
     {
     id: "conceito",
     title: "O que é brainstorming?", 
@@ -28,7 +28,7 @@ const lessonSections = [
     id: "preparo",
     title: "Como conduzir uma sessão eficiente",
     paragraphs: [
-        "Antes de começar, o facilitador precisa definir o problema, selecionar os participantes certos e deixar claro o objetivo da sessão. Um tema vago normalmente gera ideias dispersas e pouco úteis.",
+        "Antes de começar, o facilitador precisa definir o problem, selecionar os participantes certos e deixar claro o objetivo da sessão. Um tema vago normalmente gera ideias dispersas e pouco úteis.",
         "Também vale combinar regras simples: sem interrupções, sem julgamento, uma ideia por vez e tempo limitado para cada rodada. Isso deixa o ambiente seguro e aumenta a produtividade.",
     ],
     bullets: [
@@ -63,40 +63,17 @@ const lessonSections = [
         "Transformar os achados em requisitos rastreáveis.",
     ],
     },
-] as const;
-
-type LessonSectionId = (typeof lessonSections)[number]["id"];
-
-const createInitialReadState = () =>
-    lessonSections.reduce(
-    (accumulator, section) => {
-        accumulator[section.id] = false;
-        return accumulator;
-    },
-    {} as Record<LessonSectionId, boolean>,
-    );
-
-const getReadStateFromPercent = (percent: number) => {
-    const clampedPercent = Math.min(100, Math.max(0, percent));
-    const sectionsToMark = Math.round((clampedPercent / 100) * lessonSections.length);
-    const nextState = createInitialReadState();
-
-    lessonSections.forEach((section, index) => {
-        if (index < sectionsToMark) {
-            nextState[section.id] = true;
-        }
-    });
-
-    return nextState;
-};
+];
 
 export function LessonPage() {
     const navigate = useNavigate();
     const { trailId, lessonId } = useParams<{ trailId: string; lessonId: string }>();
     const setProgressData = useProgressStore((state) => state.setProgressData);
-    const [readSections, setReadSections] = useState<
-    Record<LessonSectionId, boolean>
-    >(createInitialReadState);
+    
+    const [lessonSections, setLessonSections] = useState<any[]>([]);
+    const [moduleTitle, setModuleTitle] = useState<string>("Carregando...");
+    const [readSections, setReadSections] = useState<Record<string, boolean>>({});
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const numericTrailId = Number(trailId);
     const numericLessonId = Number(lessonId);
@@ -107,7 +84,36 @@ export function LessonPage() {
                 return;
             }
 
+            setIsLoading(true);
             try {
+                // 1. Carregar detalhes do módulo (aulas/conteúdo)
+                const moduleData = await trailsService.getModule(numericLessonId);
+                setModuleTitle(moduleData.titulo);
+
+                let sections: any[] = [];
+                if (moduleData.conteudos && moduleData.conteudos.length > 0) {
+                    const sortedConteudos = [...moduleData.conteudos].sort((a: any, b: any) => (a.ordem ?? 0) - (b.ordem ?? 0));
+                    for (const conte of sortedConteudos) {
+                        try {
+                            const parsedCorpo = typeof conte.corpo === 'string' ? JSON.parse(conte.corpo) : conte.corpo;
+                            if (Array.isArray(parsedCorpo)) {
+                                sections = [...sections, ...parsedCorpo];
+                            } else if (parsedCorpo) {
+                                sections.push(parsedCorpo);
+                            }
+                        } catch (e) {
+                            console.error("Falha ao fazer parse do corpo:", e);
+                        }
+                    }
+                }
+
+                if (sections.length === 0) {
+                    sections = [...MOCK_LESSON_SECTIONS];
+                }
+
+                setLessonSections(sections);
+
+                // 2. Carregar progresso do usuário
                 const progress = await trailsService.getProgress();
                 setProgressData(progress);
 
@@ -115,27 +121,42 @@ export function LessonPage() {
                     ?.flatMap((trilha: any) => trilha.aulas || [])
                     ?.find((aula: any) => aula.trilhaId === numericTrailId && aula.moduloId === numericLessonId);
 
-                if (lessonProgress) {
-                    setReadSections(getReadStateFromPercent(lessonProgress.percentualConcluido));
-                }
-            } catch {
-                // Mantém progresso local caso o backend não responda
+                const percent = lessonProgress ? lessonProgress.percentualConcluido : 0;
+                const clampedPercent = Math.min(100, Math.max(0, percent));
+                const sectionsToMark = Math.round((clampedPercent / 100) * sections.length);
+                
+                const nextState: Record<string, boolean> = {};
+                sections.forEach((section, index) => {
+                    nextState[section.id] = index < sectionsToMark;
+                });
+                setReadSections(nextState);
+            } catch (err) {
+                console.error("Erro ao carregar os dados dinâmicos da lição:", err);
+                // Fallback para mock
+                setLessonSections([...MOCK_LESSON_SECTIONS]);
+                const nextState: Record<string, boolean> = {};
+                MOCK_LESSON_SECTIONS.forEach((section) => {
+                    nextState[section.id] = false;
+                });
+                setReadSections(nextState);
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        loadProgress();
+        void loadProgress();
     }, [numericTrailId, numericLessonId, setProgressData]);
 
-    const syncProgress = async (nextState: Record<LessonSectionId, boolean>) => {
-        if (Number.isNaN(numericTrailId) || Number.isNaN(numericLessonId)) {
+    const syncProgress = async (nextState: Record<string, boolean>, currentSections: any[]) => {
+        if (Number.isNaN(numericTrailId) || Number.isNaN(numericLessonId) || currentSections.length === 0) {
             return;
         }
 
-        const nextReadCount = lessonSections.reduce(
+        const nextReadCount = currentSections.reduce(
             (count, section) => count + (nextState[section.id] ? 1 : 0),
             0,
         );
-        const nextProgress = Math.round((nextReadCount / lessonSections.length) * 100);
+        const nextProgress = Math.round((nextReadCount / currentSections.length) * 100);
 
         try {
             await trailsService.startLesson(numericTrailId, numericLessonId);
@@ -153,23 +174,24 @@ export function LessonPage() {
         }
     };
 
-    const toggleSectionRead = (sectionId: LessonSectionId) => {
-    setReadSections((current) => {
-        const nextState = {
-            ...current,
-            [sectionId]: !current[sectionId],
-        };
-        void syncProgress(nextState);
-        return nextState;
-    });
+    const toggleSectionRead = (sectionId: string) => {
+        setReadSections((current) => {
+            const nextState = {
+                ...current,
+                [sectionId]: !current[sectionId],
+            };
+            void syncProgress(nextState, lessonSections);
+            return nextState;
+        });
     };
 
     const readCount = lessonSections.reduce(
-    (count, section) => count + (readSections[section.id] ? 1 : 0),
-    0,
+        (count, section) => count + (readSections[section.id] ? 1 : 0),
+        0,
     );
-  const progress = Math.round((readCount / lessonSections.length) * 100);
-        const isLessonCompleted = progress === 100;
+    
+    const progress = lessonSections.length > 0 ? Math.round((readCount / lessonSections.length) * 100) : 0;
+    const isLessonCompleted = progress === 100;
     const firstUnreadIndex = lessonSections.findIndex(
         (section) => !readSections[section.id],
     );
@@ -187,69 +209,75 @@ export function LessonPage() {
         if (!trailId || !lessonId) {
             return;
         }
-
         navigate(`/trails/${trailId}/lesson/${lessonId}/exercicios`);
     };
 
-    return (
-    <>
-    <Header />
+    const handleBackToTrails = () => {
+        navigate("/trails");
+    };
 
-    <main className="lesson-shell">
+    if (isLoading) {
+        return (
+            <>
+                <Header />
+                <main className="lesson-shell">
+                    <p style={{ padding: "2rem", textAlign: "center" }}>Carregando conteúdo da lição...</p>
+                </main>
+            </>
+        );
+    }
+
+    const isBrainstorming = moduleTitle.toLowerCase().includes("brainstorming");
+
+    return (
+        <>
+            <Header />
+
+            <main className="lesson-shell">
                 <Breadcrumbs
                     items={[
-                        { label: "Trilhas" },
-                        { label: "Técnicas de elicitação de requisitos" },
+                        { label: "Trilhas", onClick: handleBackToTrails },
+                        { label: moduleTitle },
                     ]}
                 />
 
-        <section className="lesson-layout" aria-label="Conteúdo da trilha">
-        <ReadingSidebar
-            progress={progress}
+                <section className="lesson-layout" aria-label="Conteúdo da trilha">
+                    <ReadingSidebar
+                        progress={progress}
                         progressLabel={`${progress}% concluído`}
                         items={sidebarItems}
-        />
+                    />
 
-        <article className="lesson-content">
-            <h1>1. Técnicas de elicitação de requisitos</h1>
+                    <article className="lesson-content">
+                        <h1>{moduleTitle}</h1>
 
-            <LessonSection
-            id="conceito"
-            title="O que é brainstorming?"
-            paragraphs={lessonSections[0].paragraphs}
-            bullets={lessonSections[0].bullets}
-            read={readSections.conceito}
-            onMarkRead={() => toggleSectionRead("conceito")}
-            >
-            <ContentPreview />
-            </LessonSection>
-
-            <LessonSection
-            id="preparo"
-            title="Como conduzir uma sessão eficiente"
-            paragraphs={lessonSections[1].paragraphs}
-            bullets={lessonSections[1].bullets}
-            read={readSections.preparo}
-            onMarkRead={() => toggleSectionRead("preparo")}
-            />
-
-            <LessonSection
-            id="tecnicas"
-            title="Variações que ajudam a gerar mais ideias"
-            paragraphs={lessonSections[2].paragraphs}
-            bullets={lessonSections[2].bullets}
-            read={readSections.tecnicas}
-            onMarkRead={() => toggleSectionRead("tecnicas")}
-            />
-
-            <LessonSection
-            id="fechamento"
-            title="Boas práticas e erros comuns"
-            paragraphs={lessonSections[3].paragraphs}
-            bullets={lessonSections[3].bullets}
-            read={readSections.fechamento}
-            onMarkRead={() => toggleSectionRead("fechamento")}
-            />
+                        {lessonSections.map((section, index) => (
+                            <LessonSection
+                                key={section.id}
+                                id={section.id}
+                                title={section.title}
+                                paragraphs={section.paragraphs}
+                                bullets={section.bullets}
+                                read={readSections[section.id] || false}
+                                onMarkRead={() => toggleSectionRead(section.id)}
+                            >
+                                {index === 0 && (
+                                    section.videoUrl ? (
+                                        <ContentPreview 
+                                            videoUrl={section.videoUrl} 
+                                            title={section.videoTitle} 
+                                            caption={section.videoCaption} 
+                                        />
+                                    ) : isBrainstorming ? (
+                                        <ContentPreview 
+                                            videoUrl="https://www.youtube-nocookie.com/embed/kKAZGA1v3cw" 
+                                            title="Técnicas de brainstorming para projetos individuais e em equipe" 
+                                            caption="Vídeo de apoio sobre técnicas de brainstorming para equipes e projetos." 
+                                        />
+                                    ) : null
+                                )}
+                            </LessonSection>
+                        ))}
 
                         {isLessonCompleted && (
                             <div className="lesson-actions">
@@ -262,10 +290,10 @@ export function LessonPage() {
                                 </button>
                             </div>
                         )}
-        </article>
-        </section>
-    </main>
-    </>
+                    </article>
+                </section>
+            </main>
+        </>
     );
 }
 
