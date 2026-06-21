@@ -1,0 +1,234 @@
+.recover-page {
+    min-height: 100vh;
+
+    background: var( --cr-gradient-primary);
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 60px 30px;
+}
+
+
+
+.recover-back-button {
+    position: absolute;
+    top: 48px;
+    left: 56px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: transparent;
+    border: none;
+
+    color: var( --cr-text-secondary);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    padding: 0;
+}
+
+.recover-back-button:hover {
+    opacity: 0.8;
+}
+
+.recover-back-arrow {
+    font-size: 36px;
+    line-height: 1;
+}
+
+.recover-back-text {
+    font-size: 18px;
+}
+
+
+
+.recover-card {
+    width: 92%;
+    max-width: 860px;
+
+    background: var(--cr-white-primary);
+
+    border: 2px solid var(--cr-border);
+    border-radius: var(--cr-radius-lg);
+
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 80px 100px 72px;
+}
+
+
+
+.recover-icon-container {
+    position: absolute;
+    top: -75px;
+    right: -55px;
+
+    width: 180px;
+    height: 180px;
+
+    background: var(--cr-white-primary);
+    border-radius: 50%;
+    border: 3px solid var(--cr-purple-assistant);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.recover-icon {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.recover-title {
+    margin: 0 0 20px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+}
+
+
+
+.recover-description {
+    max-width: 520px;
+    text-align: center;
+    color: #444;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 44px;
+}
+
+.brand-normal {
+    font-weight: 700;
+    color: #111;
+    font-style: normal;
+}
+
+.brand-accent {
+    font-weight: 700;
+    color: #f2b21a;
+    font-style: italic;
+}
+
+
+.recover-form {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+
+
+.recover-form .form-input {
+    width: 100%;
+}
+
+.recover-form .form-input span {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+}
+
+.recover-form .form-input input {
+    width: 100%;
+    height: 50px;
+    border: 1.5px solid #9c5cb8;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    background: #fff;
+    padding: 0 14px;
+}
+
+.recover-form .form-input input:focus {
+    border-color: #6a1b9a;
+    box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.12);
+}
+
+
+
+.recover-form .primary-button {
+    width: 100% !important;
+    height: 52px !important;
+    margin-top: 28px;
+    background-color: #f2b21a !important;
+    color: #111 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: filter 180ms ease, transform 180ms ease;
+}
+
+.recover-form .primary-button:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(242, 178, 26, 0.35);
+}
+
+.recover-form .primary-button:active {
+    transform: translateY(0);
+}
+
+/* ── RESPONSIVIDADE ── */
+
+@media (max-width: 768px) {
+    .recover-back-button {
+        top: 24px;
+        left: 24px;
+        font-size: 17px;
+    }
+
+    .recover-card {
+        padding: 90px 28px 52px;
+        max-width: 100%;
+    }
+
+    .recover-icon-container {
+        width: 120px;
+        height: 120px;
+        right: 8px;
+        top: -48px;
+    }
+
+    .recover-icon {
+        width: 76px;
+        height: 76px;
+    }
+
+    .recover-title {
+        font-size: 26px;
+    }
+
+    .recover-description {
+        font-size: 15px;
+        margin-bottom: 32px;
+    }
+
+    .recover-form {
+        max-width: 100%;
+    }
+}

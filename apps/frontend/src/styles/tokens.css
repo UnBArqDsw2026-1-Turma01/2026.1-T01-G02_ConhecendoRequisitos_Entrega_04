@@ -1,0 +1,84 @@
+/* ============================================================
+   ConhecendoRequisitos — Design System Tokens
+   Centralizes all design decisions so components stay consistent
+   ============================================================ */
+
+:root {
+  /* ── Brand ── */
+  --cr-purple-primary: #2b0041;
+  --cr-purple-assistant: #5e0989;
+  --cr-purple-950: #1a0433;
+  --cr-purple-900: #2d0a4e;
+  --cr-purple-800: #4b0082;
+  --cr-purple-700: #5c0e9e;
+  --cr-purple-600: #7023ab;
+  --cr-purple-500: #9333ea;
+  --cr-purple-400: #a855f7;
+  --cr-purple-200: #e9d5ff;
+  --cr-purple-100: #f3e8ff;
+  --cr-purple-50:  #faf5ff;
+  --cr-gradient-primary: linear-gradient(
+        90deg,
+        var(--cr-purple-primary) 11%,
+        var(--cr-purple-assistant) 94%
+    );
+  --cr-white-primary: #ffffff;
+
+  /* ── Status: Concluído ── */
+  --cr-green-primary: #319d2f;
+  --cr-green-700: #15803d;
+  --cr-green-600: #16a34a;
+  --cr-green-500: #22c55e;
+  --cr-green-100: #dcfce7;
+  --cr-green-50:  #f0fdf4;
+
+  /* ── Status: Em Progresso ── */
+  --cr-yellow-primary: #f1b10b; 
+  --cr-amber-600: #d97706;
+  --cr-amber-500: #f59e0b;
+  --cr-amber-400: #fbbf24;
+  --cr-amber-100: #fef3c7;
+  --cr-amber-50:  #fffbeb;
+
+  /* ── Status: Bloqueado ── */
+  --cr-gray-700: #374151;
+  --cr-gray-600: #4b5563;
+  --cr-gray-500: #6b7280;
+  --cr-gray-400: #9ca3af;
+  --cr-gray-200: #e5e7eb;
+  --cr-gray-100: #f3f4f6;
+  --cr-gray-50:  #f9fafb;
+
+  /* ── Semantic ── */
+  --cr-brand:           var(--cr-purple-assistant);
+  --cr-brand-dark:      var(--cr-purple-primary);
+  --cr-text-primary:    #000000;
+  --cr-text-secondary:  #ffffff;
+  --cr-text-muted:      #6b7280;
+  --cr-surface:         #ffffff;
+  --cr-surface-raised:  rgba(255, 255, 255, 0.85);
+  --cr-border:          rgba(74, 27, 112, 0.10);
+  --cr-border-strong:   rgba(74, 27, 112, 0.18);
+
+  /* ── Shadows ── */
+  --cr-shadow-xs: 0 1px 4px  rgba(62, 17, 88, 0.06);
+  --cr-shadow-sm: 0 4px 12px rgba(62, 17, 88, 0.08);
+  --cr-shadow-md: 0 8px 24px rgba(62, 17, 88, 0.10);
+  --cr-shadow-lg: 0 16px 40px rgba(62, 17, 88, 0.14);
+
+  /* ── Border Radius ── */
+  --cr-radius-xs:   4px;
+  --cr-radius-sm:   8px;
+  --cr-radius-md:   12px;
+  --cr-radius-lg:   30px;
+  --cr-radius-xl:   34px;
+  --cr-radius-full: 9999px;
+
+  /* ── Transitions ── */
+  --cr-transition-fast:   140ms ease;
+  --cr-transition-base:   200ms ease;
+  --cr-transition-slow:   320ms ease;
+
+  /* ── Typography ── */
+  --cr-font-sans: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
