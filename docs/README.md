@@ -1,77 +1,156 @@
 # ConhecendoRequisitos
 
-**Código da Disciplina**: FGA0208<br>
-**Número do Grupo**: 02<br>
-**Entrega**: 04<br>
+**Código da Disciplina:** FGA0208  
+**Número do Grupo:** 02  
+**Entrega:** 04
+
+---
 
 ## Alunos
-| Matrícula | Aluno |
-| --- | --- |
-| 231027032 | Arthur Oliveira |
-| 231037665 | Daniel Nascimento |
+
+| Matrícula | Aluno              |
+| --------- | ------------------ |
+| 231027032 | Arthur Oliveira    |
+| 231037665 | Daniel Nascimento  |
 | 231037692 | Isabella Choukaira |
-| 231035455 | Leticia Jesus |
-| 231038303 | Yan Aguiar |
-| 231012316 | Yasmin Nascimento |
+| 231035455 | Leticia Jesus      |
+| 231038303 | Yan Aguiar         |
+| 231012316 | Yasmin Nascimento  |
 
-## Sobre 
-O **ConhecendoRequisitos** é uma plataforma educacional desenvolvida no contexto da disciplina de **Arquitetura e Desenho de Software (FGA0208)** na Universidade de Brasília (UnB). O projeto visa auxiliar no ensino e aprendizado da Engenharia de Requisitos de forma dinâmica e interativa, por meio de trilhas de aprendizado, módulos teóricos e quizzes avaliativos com feedback em tempo real.
+---
 
-## Screenshots da Quarta Entrega
+## Sobre
+
+O **ConhecendoRequisitos** é uma plataforma educacional projetada para ensinar conceitos fundamentais de Engenharia de Requisitos de Software para estudantes e profissionais de tecnologia.
+
+A engenharia de requisitos é frequentemente ensinada de forma puramente teórica e abstrata, dificultando a retenção de conceitos cruciais para a qualidade de softwares. O projeto resolve esse problema trazendo o aprendizado por meio de trilhas de conhecimento estruturadas, módulos contendo lições dinâmicas e testes de conhecimento por meio de quizzes interativos com feedback em tempo real.
+
+O sistema foi desenvolvido como projeto prático no contexto da disciplina **FGA0208 - Arquitetura e Desenho de Software** na Universidade de Brasília (UnB), com foco na aplicação e documentação de padrões de modularização e reutilização de software.
+
+### Principais Recursos
+
+- **Autenticação:** Telas de login e cadastro.
+- **Trilhas de Aprendizado:** Visualização geral do progresso em trilhas com status dinâmicos por módulo (Concluído, Em Progresso e Bloqueado).
+- **Lições Dinâmicas:** Leitura interativa com progresso de leitura em tempo real por seções.
+- **Quizzes Interativos:** Avaliação objetiva com gabarito dinâmico.
+
+---
+
+## Screenshots da Entrega
 
 ### 1. Tela de Login e Cadastro
-*Interface de autenticação consumindo os componentes reutilizáveis.*
-*(Sinalizado para inserção posterior da screenshot)*
+
+_Interface de autenticação do usuário consumindo os campos de entrada e botões reutilizáveis do Design System._
+![imagem1](/ArquiteturaReutilizacao/imagens/image.png)
 
 ### 2. Tela de Trilhas (TrailPage)
-*Visualização do progresso das trilhas e módulos.*
-*(Sinalizado para inserção posterior da screenshot)*
+
+_Painel principal mostrando o progresso da trilha _
+![imagem2](/ArquiteturaReutilizacao/imagens/image2.png)
+
+### 3. Tela de conteúdos e quiz
+
+_Painel de conteúdo e quiz com progressos_
+![imagem3](/ArquiteturaReutilizacao/imagens/image4.png)
+![imagem4](/ArquiteturaReutilizacao/imagens/image4.png)
+
+---
 
 ## Há algo a ser executado?
 
-( X ) SIM
-
+( X ) SIM  
 ( ) NÃO
 
-O guia detalhado de execução pode ser encontrado em [Desenho de Software (Arquitetura & Reutilização)](ArquiteturaReutilizacao/4.ArquiteturaReutilizacao.md). Segue abaixo o resumo dos comandos para execução local:
+---
 
-### 1. Backend (API NestJS & Prisma)
-Acesse a pasta do backend, instale as dependências, configure o banco de dados e inicie o servidor:
+## Passo 1: Configurar o Backend (API)
+
+Acesse o diretório do backend da aplicação:
+
 ```bash
 cd apps/backend
-# 1. Instalar dependências
+```
+
+### 1.1 Instalar dependências base e do projeto
+
+Instale todos os pacotes necessários do NestJS e do Prisma Client:
+
+```bash
 npm install
+```
 
-# 2. Configurar o arquivo .env com a DATABASE_URL e DIRECT_URL do Supabase
+### 1.2 Configurar variáveis de ambiente
 
-# 3. Rodar as migrations e aplicar ao banco (sem criar novas)
+Crie um arquivo `.env` na pasta `apps/backend/` com as suas chaves de conexão do banco de dados (exemplo utilizando Supabase PostgreSQL):
+
+```env
+DATABASE_URL="postgresql://postgres.[username]:[password]@aws-1-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[username]:[password]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+```
+
+### 1.3 Rodar as Migrations do Banco de Dados
+
+Sincronize as migrations existentes com o seu banco de dados (aplica as migrations existentes sem criar novas):
+
+```bash
 npx prisma migrate deploy
+```
 
-# 4. Gerar o Prisma Client (essencial para a compilação de tipos)
+### 1.4 Gerar o Prisma Client
+
+Gere os tipos do Prisma Client para garantir a compilação correta do TypeScript com o banco:
+
+```bash
 npx prisma generate
+```
 
-# 5. Popular o banco com dados de teste
+### 1.5 Popular o Banco de Dados (Seed)
+
+Rode o script de seed para criar as trilhas, módulos, conteúdos e quizzes iniciais no banco:
+
+```bash
 npx prisma db seed
+```
 
-# 6. Iniciar o servidor em modo watch
+---
+
+## Passo 2: Executar o Ambiente de Desenvolvimento
+
+### 2.1 Iniciar o Backend (API)
+
+Dentro da pasta `apps/backend`, inicie o servidor NestJS em modo de desenvolvimento:
+
+```bash
 npm run start:dev
 ```
 
-### 2. Frontend (React & Vite)
-Em outro terminal, acesse a pasta do frontend, instale as dependências e inicie o servidor de desenvolvimento:
+### 2.2 Iniciar o Frontend
+
+Em outro terminal, acesse a pasta do frontend, instale as dependências e inicie o Vite:
+
 ```bash
 cd apps/frontend
-# 1. Instalar dependências
 npm install
-
-# 2. Iniciar o servidor Vite
 npm run dev
 ```
 
 ---
 
-## Informações Complementares 
-* **Banco de Dados:** PostgreSQL hospedado em nuvem via **Supabase**.
-* **Frontend:** Desenvolvido em **React** utilizando **Vite** e **TypeScript**.
-* **Backend:** Desenvolvido em **NestJS** utilizando **Prisma ORM** e **TypeScript**.
+## URLs de Acesso
 
+- Frontend (Vite): <http://localhost:5173>
+- Backend/API (NestJS): <http://localhost:3000>
+
+---
+
+## Informações Complementares
+
+- **Banco de Dados:** A persistência de dados está hospedada em nuvem via **Supabase (PostgreSQL)**, sendo gerenciada localmente e integrada ao backend por meio do **Prisma ORM**.
+
+---
+
+## Histórico de Versões
+
+| Versão | Data       | Descrição                                 | Autor(es)                                          | Revisor(es)                                                | Detalhes da Revisão  |
+| ------ | ---------- | ----------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------- | -------------------- |
+| 1.0    | 21/06/2026 | Documentação inicial da página de entrega | [Arthur Oliveira](https://github.com/arthur-silva) | [Isabella Choukaira](https://github.com/isabellachoukaira) | Estrutura preenchida |
