@@ -38,3 +38,6 @@ Thumbs.db
 # ── Cobertura de testes ────────────────────────────────────────
 coverage/
 *.lcov
+
+# ── Prisma (quando for configurar) ────────────────────────────
+# prisma/migrations/ → NÃO ignorar, migrations devem ser commitadas

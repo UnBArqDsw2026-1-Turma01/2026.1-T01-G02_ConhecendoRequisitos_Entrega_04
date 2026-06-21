@@ -1,9 +1,10 @@
-- [Home](/ArquiteturaReutilizacao/Home.md)
+<!-- docs/_sidebar.md -->
 
-- **Arquitetura de Software & Reutilização**
-  - [4. Desenho de Software (Arquitetura & Reutilização de Software)](ArquiteturaReutilizacao/4.ArquiteturaReutilizacao.md)
-    - [4.1. Reutilização de Software](ArquiteturaReutilizacao/4.1.ReutilizacaoDeSoftware.md)
-      - [4.1.1. Componentes de UI](ArquiteturaReutilizacao/4.1.1.ComponentesUI.md)
-      - [4.1.2. Modularização com design sistem](ArquiteturaReutilizacao/4.1.2.ModularizacaoDesignSistem.md)
-      - [4.1.3. Pacotes de uso compartilhado](ArquiteturaReutilizacao/4.1.3.PacotesUsoCompartilhado.md)
-    - [4.2. Participações - Arquitetura & Reutilização de Software](ArquiteturaReutilizacao/4.2.ParticipacoesArqReutilizacao.md)
+- [Home](/docs)
+- [Projetos](/docs/Projeto/Projeto.md)
+
+- **Arquitetura de Software & Reutilização (Vale Até um Ponto na Média Ponderada - Vide Plano de Ensino)**
+  - [4. Desenho de Software (Arquitetura & Reutilização de Software)](/docs/ArquiteturaReutilizacao/4.ArquiteturaReutilizacao.md)
+    - [4.1. DAS](/docs/ArquiteturaReutilizacao/4.1.DAS.md)
+    - [4.2. Reutilização de Software](/docs/ArquiteturaReutilizacao/4.2.ReutilizacaoDeSoftware.md)
+    - [4.3. Participações - Arquitetura & Reutilização de Software](/docs/ArquiteturaReutilizacao/4.3.ParticipacoesArqReutilizacao.md)
