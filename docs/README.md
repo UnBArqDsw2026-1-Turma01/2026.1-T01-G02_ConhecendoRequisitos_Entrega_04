@@ -1,41 +1,77 @@
-# RepositorioTemplate
-Esse repositório é para ser utilizado pelos grupos como um template inicial.
-As seções do Template NÃO DEVEM SER OMITIDAS, sendo TODAS RELEVANTES.
-Demais diretrizes constam no Moodle.
-
-**!! Atenção: Renomeie o seu repositório para (Ano.Semestre)(Turma)_(Grupo)_(NomeDoProjeto)_(Entrega_04)*. !!** 
-
-**!! *Não coloque os nomes dos alunos no título do repositório*. !!**
-
-**!! *Exemplo de título correto: 2026.1(T01)_G1_JogoSustentabilidade_Entrega_04*. !!**  
- 
- (Apague esses comentários)
-
-# Nome do Projeto
+# ConhecendoRequisitos
 
 **Código da Disciplina**: FGA0208<br>
-**Número do Grupo**: XX<br>
+**Número do Grupo**: 02<br>
 **Entrega**: 04<br>
 
 ## Alunos
-|Matrícula | Aluno |
-| -- | -- |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
+| Matrícula | Aluno |
+| --- | --- |
+| 231027032 | Arthur Oliveira |
+| 231037665 | Daniel Nascimento |
+| 231037692 | Isabella Choukaira |
+| 231035455 | Leticia Jesus |
+| 231038303 | Yan Aguiar |
+| 231012316 | Yasmin Nascimento |
 
 ## Sobre 
-Contextualize, usando referências, links, e outros materiais como fontes.
+O **ConhecendoRequisitos** é uma plataforma educacional desenvolvida no contexto da disciplina de **Arquitetura e Desenho de Software (FGA0208)** na Universidade de Brasília (UnB). O projeto visa auxiliar no ensino e aprendizado da Engenharia de Requisitos de forma dinâmica e interativa, por meio de trilhas de aprendizado, módulos teóricos e quizzes avaliativos com feedback em tempo real.
 
 ## Screenshots da Quarta Entrega
-Adicione 2 ou mais screenshots em termos de artefatos realizados na entrega.
+
+### 1. Tela de Login e Cadastro
+*Interface de autenticação consumindo os componentes reutilizáveis.*
+*(Sinalizado para inserção posterior da screenshot)*
+
+### 2. Tela de Trilhas (TrailPage)
+*Visualização do progresso das trilhas e módulos.*
+*(Sinalizado para inserção posterior da screenshot)*
 
 ## Há algo a ser executado?
 
-( ) SIM
+( X ) SIM
 
 ( ) NÃO
 
-Se SIM, insira um manual (ou um script) para auxiliar ainda mais os interessados na execução.
+O guia detalhado de execução pode ser encontrado em [Desenho de Software (Arquitetura & Reutilização)](ArquiteturaReutilizacao/4.ArquiteturaReutilizacao.md). Segue abaixo o resumo dos comandos para execução local:
+
+### 1. Backend (API NestJS & Prisma)
+Acesse a pasta do backend, instale as dependências, configure o banco de dados e inicie o servidor:
+```bash
+cd apps/backend
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar o arquivo .env com a DATABASE_URL e DIRECT_URL do Supabase
+
+# 3. Rodar as migrations e aplicar ao banco (sem criar novas)
+npx prisma migrate deploy
+
+# 4. Gerar o Prisma Client (essencial para a compilação de tipos)
+npx prisma generate
+
+# 5. Popular o banco com dados de teste
+npx prisma db seed
+
+# 6. Iniciar o servidor em modo watch
+npm run start:dev
+```
+
+### 2. Frontend (React & Vite)
+Em outro terminal, acesse a pasta do frontend, instale as dependências e inicie o servidor de desenvolvimento:
+```bash
+cd apps/frontend
+# 1. Instalar dependências
+npm install
+
+# 2. Iniciar o servidor Vite
+npm run dev
+```
+
+---
 
 ## Informações Complementares 
-Quaisquer outras informações adicionais podem ser descritas nessa seção.
+* **Banco de Dados:** PostgreSQL hospedado em nuvem via **Supabase**.
+* **Frontend:** Desenvolvido em **React** utilizando **Vite** e **TypeScript**.
+* **Backend:** Desenvolvido em **NestJS** utilizando **Prisma ORM** e **TypeScript**.
+
