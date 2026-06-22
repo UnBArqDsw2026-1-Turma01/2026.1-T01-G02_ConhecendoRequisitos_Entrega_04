@@ -148,9 +148,3 @@ npm run dev
 - **Banco de Dados:** A persistência de dados está hospedada em nuvem via **Supabase (PostgreSQL)**, sendo gerenciada localmente e integrada ao backend por meio do **Prisma ORM**.
 
 ---
-
-## Histórico de Versões
-
-| Versão | Data       | Descrição                                 | Autor(es)                                          | Revisor(es)                                                | Detalhes da Revisão  |
-| ------ | ---------- | ----------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------- | -------------------- |
-| 1.0    | 21/06/2026 | Documentação inicial da página de entrega | [Arthur Oliveira](https://github.com/arthur-silva) | [Isabella Choukaira](https://github.com/isabellachoukaira) | Estrutura preenchida |
