@@ -1,78 +1,156 @@
-# RepositorioTemplate
+# ConhecendoRequisitos
 
-Repositório que deve ser utilizado como template inicial pelos grupos da matéria de Arquitetura e Desenho de Software.
+**Código da Disciplina:** FGA0208  
+**Número do Grupo:** 02  
+**Entrega:** 04
 
-## Introdução
+---
 
-Este repositório traz um template de repo de documentação a ser seguido pelos grupos de arquitetura e desenho de software.
+## Alunos
 
-## Tecnologia
+| Matrícula | Aluno              |
+| --------- | ------------------ |
+| 231027032 | Arthur Oliveira    |
+| 231037665 | Daniel Nascimento  |
+| 231037692 | Isabella Choukaira |
+| 231035455 | Leticia Jesus      |
+| 231038303 | Yan Aguiar         |
+| 231012316 | Yasmin Nascimento  |
 
-A geração do site estático é realizada utilizando o [docsify](https://docsify.js.org/).
+---
 
-```shell
-"Docsify generates your documentation website on the fly. Unlike GitBook, it does not generate static html files. Instead, it smartly loads and parses your Markdown files and displays them as a website. To start using it, all you need to do is create an index.html and deploy it on GitHub Pages."
+## Sobre
+
+O **ConhecendoRequisitos** é uma plataforma educacional projetada para ensinar conceitos fundamentais de Engenharia de Requisitos de Software para estudantes e profissionais de tecnologia.
+
+A engenharia de requisitos é frequentemente ensinada de forma puramente teórica e abstrata, dificultando a retenção de conceitos cruciais para a qualidade de softwares. O projeto resolve esse problema trazendo o aprendizado por meio de trilhas de conhecimento estruturadas, módulos contendo lições dinâmicas e testes de conhecimento por meio de quizzes interativos com feedback em tempo real.
+
+O sistema foi desenvolvido como projeto prático no contexto da disciplina **FGA0208 - Arquitetura e Desenho de Software** na Universidade de Brasília (UnB), com foco na aplicação e documentação de padrões de modularização e reutilização de software.
+
+### Principais Recursos
+
+- **Autenticação:** Telas de login e cadastro.
+- **Trilhas de Aprendizado:** Visualização geral do progresso em trilhas com status dinâmicos por módulo (Concluído, Em Progresso e Bloqueado).
+- **Lições Dinâmicas:** Leitura interativa com progresso de leitura em tempo real por seções.
+- **Quizzes Interativos:** Avaliação objetiva com gabarito dinâmico.
+
+---
+
+## Screenshots da Entrega
+
+### 1. Tela de Login e Cadastro
+
+_Interface de autenticação do usuário consumindo os campos de entrada e botões reutilizáveis do Design System._
+![imagem1](/docs/ArquiteturaReutilizacao/imagens/image.png)
+
+### 2. Tela de Trilhas (TrailPage)
+
+_Painel principal mostrando o progresso da trilha _
+![imagem2](/docs/ArquiteturaReutilizacao/imagens/image2.png)
+
+### 3. Tela de conteúdos e quiz
+
+_Painel de conteúdo e quiz com progressos_
+![imagem3](/docs/ArquiteturaReutilizacao/imagens/image4.png)
+![imagem4](/docs/ArquiteturaReutilizacao/imagens/image4.png)
+
+---
+
+## Há algo a ser executado?
+
+( X ) SIM  
+( ) NÃO
+
+---
+
+## Passo 1: Configurar o Backend (API)
+
+Acesse o diretório do backend da aplicação:
+
+```bash
+cd apps/backend
 ```
 
-### Instalando o docsify
+### 1.1 Instalar dependências base e do projeto
 
-Execute o comando:
+Instale todos os pacotes necessários do NestJS e do Prisma Client:
 
-```shell
-npm i docsify-cli -g
+```bash
+npm install
 ```
 
-### Executando localmente
+### 1.2 Configurar variáveis de ambiente
 
-Para iniciar o site de documentação localmente, utilize o comando:
+Crie um arquivo `.env` na pasta `apps/backend/` com as suas chaves de conexão do banco de dados (exemplo utilizando Supabase PostgreSQL):
 
-```shell
-docsify serve ./docs
+```env
+DATABASE_URL="postgresql://postgres.[username]:[password]@aws-1-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[username]:[password]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+```
+
+### 1.3 Rodar as Migrations do Banco de Dados
+
+Sincronize as migrations existentes com o seu banco de dados (aplica as migrations existentes sem criar novas):
+
+```bash
+npx prisma migrate deploy
+```
+
+### 1.4 Gerar o Prisma Client
+
+Gere os tipos do Prisma Client para garantir a compilação correta do TypeScript com o banco:
+
+```bash
+npx prisma generate
+```
+
+### 1.5 Popular o Banco de Dados (Seed)
+
+Rode o script de seed para criar as trilhas, módulos, conteúdos e quizzes iniciais no banco:
+
+```bash
+npx prisma db seed
 ```
 
 ---
 
-## Como Executar o Projeto (Aplicação)
+## Passo 2: Executar o Ambiente de Desenvolvimento
 
-O projeto é dividido em um monorepo contendo as aplicações `frontend` e `backend` dentro do diretório `apps/`.
+### 2.1 Iniciar o Backend (API)
 
-### 1. Backend (NestJS & Prisma)
-Para iniciar a API do backend:
-1. Acesse o diretório:
-   ```bash
-   cd apps/backend
-   ```
-2. Crie e configure o arquivo `.env` com as credenciais do banco Supabase (conforme exemplo em `.env.example`).
-3. Instale as dependências:
-   ```bash
-   npm install
-   ```
-4. Aplique as migrations e gere o cliente Prisma:
-   ```bash
-   npx prisma migrate deploy
-   npx prisma generate
-   ```
-5. Alimente o banco de dados com a seed:
-   ```bash
-   npx prisma db seed
-   ```
-6. Inicie o servidor:
-   ```bash
-   npm run start:dev
-   ```
+Dentro da pasta `apps/backend`, inicie o servidor NestJS em modo de desenvolvimento:
 
-### 2. Frontend (React & Vite)
-Para iniciar a interface do usuário do frontend:
-1. Acesse o diretório:
-   ```bash
-   cd apps/frontend
-   ```
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Inicie o servidor Vite:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run start:dev
+```
 
+### 2.2 Iniciar o Frontend
+
+Em outro terminal, acesse a pasta do frontend, instale as dependências e inicie o Vite:
+
+```bash
+cd apps/frontend
+npm install
+npm run dev
+```
+
+---
+
+## URLs de Acesso
+
+- Frontend (Vite): <http://localhost:5173>
+- Backend/API (NestJS): <http://localhost:3000>
+
+---
+
+## Informações Complementares
+
+- **Banco de Dados:** A persistência de dados está hospedada em nuvem via **Supabase (PostgreSQL)**, sendo gerenciada localmente e integrada ao backend por meio do **Prisma ORM**.
+
+---
+
+## Histórico de Versões
+
+| Versão | Data       | Descrição                                 | Autor(es)                                          | Revisor(es)                                                | Detalhes da Revisão  |
+| ------ | ---------- | ----------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------- | -------------------- |
+| 1.0    | 21/06/2026 | Documentação inicial da página de entrega | [Arthur Oliveira](https://github.com/arthur-silva) | [Isabella Choukaira](https://github.com/isabellachoukaira) | Estrutura preenchida |
